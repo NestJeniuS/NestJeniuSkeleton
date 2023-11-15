@@ -16,7 +16,7 @@ async function bootstrap() {
           format: winston.format.combine(
             winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), // 날짜 형식
             winston.format.prettyPrint({ colorize: true }),
-            winston.format.label({ label: 'foodfood' }), // 프로젝트 명
+            winston.format.label({ label: 'asset' }), // 프로젝트 명
             winston.format.printf(({ level, message, label, timestamp }) => {
               let logColor
               /*
@@ -32,17 +32,17 @@ async function bootstrap() {
                   break
                 case 'warn':
                   logColor = '\x1b[33m' // 노란색
+                case 'info':
+                  logColor = '\x1b[32m' // 초록색
                   break
                 default:
                   logColor = '\x1b[37m' // 흰색
                   break
               }
-
               return `[${label}] ${logColor}${timestamp} [${level.toUpperCase()}] - ${message}\x1b[0m` // [프로젝트명] 시간 [로그레벨] 메세지
             }),
           ),
         }),
-
         new winston.transports.File({
           level: 'error',
           filename: `error-${moment(new Date()).format('YYYY-MM-DD')}.log`, // // 에러 로그는 error-2023-10-31.log 형식으로 저장
@@ -51,10 +51,9 @@ async function bootstrap() {
           format: winston.format.combine(
             winston.format.errors({ stack: true }),
             winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-            winston.format.label({ label: 'foodfood' }), // 프로젝트 이름
+            winston.format.label({ label: 'asset' }), // 프로젝트 이름
             winston.format.printf(({ level, message, label, timestamp }) => {
               let logColor
-
               switch (level) {
                 case 'log':
                   logColor = '\x1b[34m' // 파란색
@@ -64,18 +63,17 @@ async function bootstrap() {
                   break
                 case 'warn':
                   logColor = '\x1b[33m' // 노란색
+                case 'info':
+                  logColor = '\x1b[32m' // 초록색
                   break
                 default:
-                  logColor = '\x1b[37m' // 흰색
+                  logColor = '\x1b[0m' // 기본 색상 (흰색)
                   break
               }
-
               return `[${label}] ${logColor}${timestamp} [${level.toUpperCase()}] - ${message}\x1b[0m`
             }),
-            winston.format.json(), // 에러는 json형식으로 저장한다.
           ),
         }),
-
         new winston.transports.File({
           filename: `application-${moment(new Date()).format(
             'YYYY-MM-DD',
@@ -94,12 +92,13 @@ async function bootstrap() {
     }),
   })
 
+  app.enableCors()
+
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('please insert project name')
-    .setDescription('The [project name] API description')
-    .setVersion('1.0.0')
+    .setTitle('asset')
+    .setDescription('The must-Go API description')
+    .setVersion('1.0')
     .addBearerAuth()
-    .addTag('user')
     .build()
   const document = SwaggerModule.createDocument(app, swaggerConfig)
   SwaggerModule.setup('swagger', app, document)
