@@ -8,12 +8,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 import { Exclude, Expose, Transform, Type } from 'class-transformer'
+import { UUID } from 'crypto'
 
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Expose()
-  id: string
+  id: UUID
 
   @Column({ length: 15 })
   @Expose()

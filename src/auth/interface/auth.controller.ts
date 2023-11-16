@@ -1,42 +1,129 @@
 import {
   Controller,
-  Get,
   Post,
+  Req,
+  UseGuards,
+  Res,
+  Get,
+  Inject,
   Body,
-  Patch,
-  Param,
-  Delete,
+  HttpCode,
+  Header,
+  HttpStatus,
 } from '@nestjs/common'
-import { AuthService } from '../app/auth.service'
-import { CreateAuthDto } from './dto/create-auth.dto'
-import { UpdateAuthDto } from './dto/update-auth.dto'
+import { LocalAuthGuard } from '@auth/infra/passport/guards/local.guard'
+import { Request, Response } from 'express'
+import { JwtAuthGuard } from '@auth/infra/passport/guards/jwt.guard'
+import { ReqLoginDto } from './dto/login.dto.'
+import { IAuthService } from '@auth/domain/interfaces/auth.service.interface'
+import { ReqCheckPasswordDto } from './dto/checkPassword.dto'
+import { jwtExpiration } from '@common/configs/jwt.config'
+import { IHandleDateTime } from '@common/interfaces/IHandleDateTime'
+import {
+  IAUTH_SERVICE,
+  IHANDLE_DATE_TIME,
+} from '@common/constants/provider.constant'
+import * as useragent from 'useragent' // User-Agent 문자열을 파싱
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    @Inject(IAUTH_SERVICE)
+    private readonly authService: IAuthService,
+    @Inject(IHANDLE_DATE_TIME)
+    private readonly handleDateTime: IHandleDateTime,
+  ) {}
 
-  //   @Post()
-  //   create(@Body() createAuthDto: CreateAuthDto) {
-  //     return this.authService.create(createAuthDto)
-  //   }
+  @Get('status')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  async validateLoggedIn() {
+    return true
+  }
 
-  //   @Get()
-  //   findAll() {
-  //     return this.authService.findAll()
-  //   }
+  @Post('login')
+  @HttpCode(HttpStatus.CREATED)
+  @UseGuards(LocalAuthGuard)
+  async login(@Req() req: Request, @Res() res: Response): Promise<void> {
+    console.log(req.headers)
 
-  //   @Get(':id')
-  //   findOne(@Param('id') id: string) {
-  //     return this.authService.findOne(+id)
-  //   }
+    const { browser, platform, os, version } = useragent.parse(
+      req.headers['user-agent'],
+    )
 
-  //   @Patch(':id')
-  //   update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-  //     return this.authService.update(+id, updateAuthDto)
-  //   }
+    const { accessToken, refreshToken } = await this.authService.login({
+      id: req.user.id,
+      ip: req.ip,
+      device: { browser, platform, os, version },
+    })
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      expires: this.handleDateTime.getFewHoursLater(
+        jwtExpiration.accessTokenExpirationHours,
+      ),
+    })
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      expires: this.handleDateTime.getFewDaysLater(
+        jwtExpiration.refreshTokenExpirationDays,
+      ),
+    })
+    res.send()
+  }
 
-  //   @Delete(':id')
-  //   remove(@Param('id') id: string) {
-  //     return this.authService.remove(+id)
-  //   }
+  @Post('logout')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthGuard)
+  async logout(@Req() req: Request, @Res() res: Response): Promise<void> {
+    await this.authService.logout({ id: req.user.id })
+    res.clearCookie('accessToken')
+    res.clearCookie('refreshToken')
+    res.send()
+  }
+
+  @Post('refresh')
+  @HttpCode(HttpStatus.CREATED)
+  async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
+    try {
+      const { refreshToken } = req.cookies
+      const { browser, platform, os, version } = useragent.parse(
+        req.headers['user-agent'],
+      )
+      const { accessToken } = await this.authService.refresh({
+        refreshToken,
+        ip: req.ip,
+        device: { browser, platform, os, version },
+      })
+      res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        expires: this.handleDateTime.getFewDaysLater(
+          jwtExpiration.refreshTokenExpirationDays,
+        ),
+      })
+      res.send()
+    } catch (error) {
+      res.clearCookie('accessToken')
+      res.clearCookie('refreshToken')
+      res.send()
+    }
+  }
+
+  @Post('check-password')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthGuard)
+  async checkPassword(
+    @Req() req: Request,
+    @Body() body: ReqCheckPasswordDto,
+  ): Promise<void> {
+    await this.authService.checkPassword({
+      id: req.user.id,
+      password: body.password,
+    })
+  }
 }

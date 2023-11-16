@@ -20,7 +20,7 @@ import {
   IUSER_REPOSITORY,
 } from '@common/constants/provider.constant'
 import { IUserService } from '@user/domain/interface/user.service.interface'
-import { IPasswordHasher } from '@common/IPasswordHasher'
+import { IPasswordHasher } from '@common/interfaces/IPasswordHasher'
 import { ConfigService } from '@nestjs/config'
 import { REGISTER_SUCCESS_MESSAGE } from '@common/messages/user/user.messages'
 

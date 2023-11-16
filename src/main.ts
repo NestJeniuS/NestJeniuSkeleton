@@ -6,6 +6,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { WinstonModule } from 'nest-winston'
 import * as winston from 'winston'
 import * as moment from 'moment'
+import * as cookieParser from 'cookie-parser'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -93,6 +94,7 @@ async function bootstrap() {
   })
 
   app.enableCors()
+  app.use(cookieParser())
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('asset')
