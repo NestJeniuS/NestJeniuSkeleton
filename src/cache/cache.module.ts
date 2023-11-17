@@ -13,7 +13,6 @@ import { cacheConfig } from '@common/configs/cache.config'
         host: cacheConfig(configService).cacheHost,
         port: cacheConfig(configService).cachePort,
         password: cacheConfig(configService).cachePassword,
-        ttl: cacheConfig(configService).cacheTTL,
       }),
       inject: [ConfigService],
     }),

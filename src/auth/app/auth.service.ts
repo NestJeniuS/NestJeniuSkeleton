@@ -4,8 +4,6 @@ import {
   Logger,
   UnauthorizedException,
   NotFoundException,
-  ForbiddenException,
-  ConflictException,
 } from '@nestjs/common'
 import {
   CHECK_PASSWORD_MESSAGE,
@@ -88,6 +86,19 @@ export class AuthService implements IAuthService {
     return user
   }
 
+  async login(req: ReqLoginAppDto): Promise<ResLoginAppDto> {
+    const accessToken = this.tokenService.generateAccessToken(req)
+    const refreshToken = this.tokenService.generateRefreshToken(req)
+    const { ip, device } = req
+    await this.cacheService.setCache(
+      `refreshToken:${req.id}`,
+      { refreshToken, ip, device },
+      jwtExpiration.refreshTokenExpirationSeconds,
+    )
+    this.logger.log('info', `${LOGIN_SUCCESS_MESSAGE}-유저 ID:${req.id}`)
+    return plainToClass(ResLoginAppDto, { accessToken, refreshToken })
+  }
+
   async checkPassword(req: ReqCheckPasswordAppDto): Promise<void> {
     const userPassword = await this.userRepository.findPasswordById(req.id)
 
@@ -101,19 +112,6 @@ export class AuthService implements IAuthService {
     this.logger.log('info', `${CHECK_PASSWORD_MESSAGE}-user:${req.id}`)
   }
 
-  async login(req: ReqLoginAppDto): Promise<ResLoginAppDto> {
-    const accessToken = this.tokenService.generateAccessToken(req)
-    const refreshToken = this.tokenService.generateRefreshToken(req)
-    const { ip, device } = req
-    // await this.redisService.set(
-    //   `refresh_token:${req.id}`,
-    //   { refreshToken, ip, device },
-    //   jwtExpiration.refreshTokenExpirationSeconds,
-    // );
-    this.logger.log('info', `${LOGIN_SUCCESS_MESSAGE}-유저 ID:${req.id}`)
-    return plainToClass(ResLoginAppDto, { accessToken, refreshToken })
-  }
-
   async logout(req: ReqLogoutAppDto): Promise<void> {
     // await this.redisService.delete(`refresh_token:${req.id}`);
     await this.cacheService.deleteCache(`user:${req.id}`)
@@ -122,11 +120,12 @@ export class AuthService implements IAuthService {
 
   async refresh(req: ReqRefreshAppDto): Promise<ResRefreshAppDto> {
     const decoded = this.tokenService.decodeToken(req.refreshToken)
+
     if (!decoded || !decoded.id) {
       throw new UnauthorizedException(AUTH_INVALID_TOKEN)
     }
     const redisRefreshInfo: RefreshInfo = await this.cacheService.getFromCache(
-      `refresh_token:${decoded.id}`,
+      `refreshToken:${decoded.id}`,
     )
 
     if (redisRefreshInfo === null) {
