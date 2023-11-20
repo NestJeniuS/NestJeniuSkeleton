@@ -8,7 +8,6 @@ import {
   Delete,
   Inject,
 } from '@nestjs/common'
-import { UserService } from '../app/user.service'
 import { ReqRegisterDto } from './dto/registerUserDto'
 import { IUSER_SERVICE } from '@common/constants/provider.constant'
 import { IUserService } from '@user/domain/interface/user.service.interface'
@@ -22,7 +21,6 @@ export class UserController {
 
   @Post()
   async register(@Body() user: ReqRegisterDto): Promise<void> {
-    console.log(1)
     await this.userService.register(user)
   }
 
