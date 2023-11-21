@@ -8,6 +8,7 @@ import { AuthModule } from './auth/interface/auth.module'
 import { UserModule } from './user/interface/user.module'
 import { RequestLoggingMiddleware } from '@common/middlewares/request-logging.middleware'
 import { RedisCacheModule } from '@cache/cache.module'
+import { ClassificationModule } from '@classification/interface/classification.module'
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { RedisCacheModule } from '@cache/cache.module'
     AuthModule,
     UserModule,
     RedisCacheModule,
+    ClassificationModule,
   ],
 })
 export class AppModule {}
