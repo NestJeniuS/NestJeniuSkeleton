@@ -1,6 +1,7 @@
 import { Controller, Body, Get, Post, Put, Inject } from '@nestjs/common'
 import { IBudgetService } from '@budget/domain/interface/budget.service.interface'
 import { IBUDGET_SERVICE } from '@common/constants/provider.constant'
+import { ReqBudgetDto } from '@budget/domain/dto/createBudget.app.dto'
 
 @Controller('budgets')
 export class BudgetController {
@@ -11,6 +12,6 @@ export class BudgetController {
 
   @Post()
   async create(@Body() budget: ReqBudgetDto): Promise<void> {
-    await this.budegetService.create(budget)
+    await this.budegetService.createBudget(budget)
   }
 }
