@@ -15,6 +15,6 @@ export const typeORMConfig = async (
     entities: [__dirname + '/../../**/*.entity.{js,ts}'], // 상대경로 지정 확실히 하기!
     synchronize: configService.get<boolean>('DB_SYNCHRONIZE') || false,
     namingStrategy: new SnakeNamingStrategy(),
-    logging: true,
+    logging: false,
   }
 }

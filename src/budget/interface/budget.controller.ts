@@ -1,8 +1,29 @@
-import { Controller, Body, Get, Post, Put, Inject } from '@nestjs/common'
+import {
+  Controller,
+  Body,
+  Get,
+  Post,
+  Put,
+  Inject,
+  UseGuards,
+  Req,
+  HttpCode,
+  Res,
+  HttpStatus,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common'
 import { IBudgetService } from '@budget/domain/interface/budget.service.interface'
 import { IBUDGET_SERVICE } from '@common/constants/provider.constant'
-import { ReqBudgetDto } from '@budget/domain/dto/createBudget.app.dto'
+import {
+  ReqCreateBudgetDto,
+  ResCreateBudgetDto,
+} from '@budget/domain/dto/budgetDto'
+import { JwtAuthGuard } from '@auth/infra/passport/guards/jwt.guard'
+import { plainToClass } from 'class-transformer'
+import { Request } from 'express'
 
+@UseGuards(JwtAuthGuard)
 @Controller('budgets')
 export class BudgetController {
   constructor(
@@ -11,7 +32,19 @@ export class BudgetController {
   ) {}
 
   @Post()
-  async create(@Body() budget: ReqBudgetDto): Promise<void> {
-    await this.budegetService.createBudget(budget)
+  @UsePipes(ValidationPipe)
+  @HttpCode(HttpStatus.CREATED)
+  async createBudget(
+    @Req() req: Request,
+    @Body() budget: ReqCreateBudgetDto,
+  ): Promise<string> {
+    const userId = req.user.id
+    // console.log(userId)
+    // console.log(budget)
+    const budgets = await this.budegetService.createBudget({
+      userId,
+      ...budget,
+    })
+    return budgets
   }
 }

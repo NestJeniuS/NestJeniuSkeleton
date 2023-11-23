@@ -9,7 +9,7 @@ import { UserModule } from './user/interface/user.module'
 import { RequestLoggingMiddleware } from '@common/middlewares/request-logging.middleware'
 import { RedisCacheModule } from '@cache/cache.module'
 import { ClassificationModule } from '@classification/interface/classification.module'
-
+import { BudgetModule } from '@budget/interface/budget.module'
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -33,6 +33,7 @@ import { ClassificationModule } from '@classification/interface/classification.m
     UserModule,
     RedisCacheModule,
     ClassificationModule,
+    BudgetModule,
   ],
 })
 export class AppModule {}

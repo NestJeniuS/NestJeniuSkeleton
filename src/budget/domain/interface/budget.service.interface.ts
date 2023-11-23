@@ -1,5 +1,6 @@
-import { ReqBudgetDto } from '../dto/createBudget.app.dto'
+import { UUID } from 'crypto'
+import { ReqCreateBudgetDto, ResCreateBudgetDto } from '../dto/budgetDto'
 
 export interface IBudgetService {
-  createBudget(budget: ReqBudgetDto): Promise<void>
+  createBudget(req: ReqCreateBudgetDto): Promise<string>
 }

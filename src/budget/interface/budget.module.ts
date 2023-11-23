@@ -4,14 +4,17 @@ import { JwtModule } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { jwtConfig } from '@common/configs/jwt.config'
 import { UserModule } from '@user/interface/user.module'
-import { BudgetService } from '@budget/app/budget.service'
+import { BudgetProvider } from './budget.provider'
+import { Budget } from '@budget/domain/budget.entity'
+import { TypeOrmModule } from '@nestjs/typeorm'
 
 @Module({
   controllers: [BudgetController],
-  providers: [BudgetService],
-  exports: [BudgetService],
+  providers: [...BudgetProvider],
+  exports: [...BudgetProvider],
   imports: [
     UserModule,
+    TypeOrmModule.forFeature([Budget]),
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: jwtConfig(configService).accessTokenSecret,
@@ -23,4 +26,4 @@ import { BudgetService } from '@budget/app/budget.service'
     }),
   ],
 })
-export class AuthModule {}
+export class BudgetModule {}
