@@ -21,7 +21,3 @@ export class ReqCreateBudgetDto {
   @IsObject()
   readonly amount: Record<number, number>
 }
-
-export class ResCreateBudgetDto {
-  readonly id: number
-}

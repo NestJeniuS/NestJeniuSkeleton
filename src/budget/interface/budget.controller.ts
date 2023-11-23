@@ -15,10 +15,7 @@ import {
 } from '@nestjs/common'
 import { IBudgetService } from '@budget/domain/interface/budget.service.interface'
 import { IBUDGET_SERVICE } from '@common/constants/provider.constant'
-import {
-  ReqCreateBudgetDto,
-  ResCreateBudgetDto,
-} from '@budget/domain/dto/budgetDto'
+import { ReqCreateBudgetDto } from '@budget/domain/dto/budget.app.dto'
 import { JwtAuthGuard } from '@auth/infra/passport/guards/jwt.guard'
 import { plainToClass } from 'class-transformer'
 import { Request } from 'express'
