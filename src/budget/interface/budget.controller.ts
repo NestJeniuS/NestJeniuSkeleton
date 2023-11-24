@@ -36,8 +36,6 @@ export class BudgetController {
     @Body() budget: ReqCreateBudgetDto,
   ): Promise<string> {
     const userId = req.user.id
-    // console.log(userId)
-    // console.log(budget)
     const budgets = await this.budegetService.createBudget({
       userId,
       ...budget,

@@ -1,8 +1,12 @@
-import { ValidationOptions, registerDecorator } from 'class-validator'
-export function IsCategoryId(validationOptions?: ValidationOptions) {
+import {
+  ValidationOptions,
+  registerDecorator,
+  ValidationArguments,
+} from 'class-validator'
+export function IsClassificationId(validationOptions?: ValidationOptions) {
   return function (object: Object, propertyName: string) {
     registerDecorator({
-      name: 'isCategoryId',
+      name: 'isClassificationId',
       target: object.constructor,
       propertyName: propertyName,
       constraints: [],
@@ -13,6 +17,28 @@ export function IsCategoryId(validationOptions?: ValidationOptions) {
           return Object.keys(value).every(
             (key) => 1 <= Number(key) && Number(key) <= 17,
           )
+        },
+      },
+    })
+  }
+}
+
+export function IsInteger(validationOptions?: ValidationOptions) {
+  return function (object: object, propertyName: string) {
+    registerDecorator({
+      name: 'isInterger',
+      target: object.constructor,
+      propertyName: propertyName,
+      constraints: [],
+      options: validationOptions,
+      validator: {
+        validate(value: any, args: ValidationArguments) {
+          const values = Object.values(value)
+          const isInvalid = values.some(
+            (val) =>
+              typeof val !== 'number' || !Number.isInteger(val) || val <= 0,
+          )
+          return !isInvalid
         },
       },
     })

@@ -1,4 +1,3 @@
-import { UUID } from 'crypto'
 import { ReqCreateBudgetDto } from '../dto/budget.app.dto'
 
 export interface IBudgetService {

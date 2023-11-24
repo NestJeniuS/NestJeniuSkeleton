@@ -29,10 +29,11 @@ export class BudgetRepository implements IBudgetRepository {
     return plainToClass(Budget, result)
   }
 
-  async findSameBudget(month: Date): Promise<Budget> {
+  async findSameBudget(yearMonth: Date, userId: UUID): Promise<Budget> {
     const existingBudget = await this.budgetRepository.findOne({
       where: {
-        month: month,
+        month: yearMonth,
+        user: { id: userId },
       },
     })
     return existingBudget

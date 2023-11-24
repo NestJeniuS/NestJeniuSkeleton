@@ -23,28 +23,30 @@ export class BudgetService implements IBudgetService {
 
   async createBudget(req: ReqCreateBudgetDto): Promise<string> {
     try {
-      const dateObject = new Date(req.month) // month는 문자열
-      // console.log('userid', req.userId)
+      const yearMonth = new Date(req.month) // month는 문자열
+
       // 해당 달에 이미 예산이 있는지 확인
-      const existingBudget =
-        await this.budgetRepository.findSameBudget(dateObject)
+      const existingBudget = await this.budgetRepository.findSameBudget(
+        yearMonth,
+        req.userId,
+      )
 
       if (existingBudget) {
         return '해당 달에 이미 예산이 존재합니다.'
+      } else {
+        // Promise.all을 사용하여 모든 프로미스를 병렬로 해결
+        await Promise.all(
+          Object.entries(req.amount).map(async ([classification, budget]) => {
+            await this.budgetRepository.createBudget(
+              req.userId,
+              yearMonth,
+              Number(classification),
+              budget,
+            )
+          }),
+        )
+        return '예산 설정에 성공하였습니다.'
       }
-
-      // Promise.all을 사용하여 모든 프로미스를 병렬로 해결
-      const budgets = await Promise.all(
-        Object.entries(req.amount).map(async ([classification, budget]) => {
-          const result = await this.budgetRepository.createBudget(
-            req.userId,
-            dateObject,
-            Number(classification),
-            budget,
-          )
-        }),
-      )
-      return '예산 설정에 성공하였습니다.'
     } catch (error) {
       console.log(error)
       throw new InternalServerErrorException('예산 설정에 실패했습니다.')

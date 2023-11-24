@@ -1,6 +1,6 @@
 import { BudgetService } from '@budget/app/budget.service'
 import { BudgetRepository } from '@budget/infra/budgetRepository'
-import { UserRepository } from '@user/infra/repository/userRepository'
+import { UserRepository } from '@user/infra/userRepository'
 import {
   IBUDGET_REPOSITORY,
   IBUDGET_SERVICE,

@@ -8,7 +8,7 @@ import {
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston'
 import { PasswordHasher } from '@common/passwordHasher'
 import { UserService } from '@user/app/user.service'
-import { UserRepository } from '@user/infra/repository/userRepository'
+import { UserRepository } from '@user/infra/userRepository'
 
 export const UserProvider = [
   {

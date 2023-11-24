@@ -7,7 +7,7 @@ import { UserProvider } from './user.provider'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from '@user/domain/entity/user.entity'
 // import { TypeOrmExModule } from '@common/decorator/typeorm-ex.module'
-import { UserRepository } from '@user/infra/repository/userRepository'
+import { UserRepository } from '@user/infra/userRepository'
 
 @Module({
   imports: [

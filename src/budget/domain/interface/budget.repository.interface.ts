@@ -8,5 +8,5 @@ export interface IBudgetRepository {
     classification: number,
     amount: Number,
   ): Promise<Budget>
-  findSameBudget(month: Date): Promise<Budget>
+  findSameBudget(month: Date, userId: UUID): Promise<Budget>
 }
