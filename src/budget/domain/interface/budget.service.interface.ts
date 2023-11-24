@@ -1,5 +1,6 @@
-import { ReqCreateBudgetDto } from '../dto/budget.app.dto'
+import { ReqBudgetDto } from '../dto/budget.app.dto'
 
 export interface IBudgetService {
-  createBudget(req: ReqCreateBudgetDto): Promise<string>
+  createBudget(req: ReqBudgetDto): Promise<string>
+  updateBudget(req: ReqBudgetDto): Promise<string>
 }

@@ -29,13 +29,43 @@ export class BudgetRepository implements IBudgetRepository {
     return plainToClass(Budget, result)
   }
 
-  async findSameBudget(yearMonth: Date, userId: UUID): Promise<Budget> {
-    const existingBudget = await this.budgetRepository.findOne({
+  async findSameBudget(yearMonth: Date, userId: UUID): Promise<object> {
+    const existingBudget = await this.budgetRepository.find({
       where: {
         month: yearMonth,
         user: { id: userId },
       },
     })
     return existingBudget
+  }
+  async updateBudget(
+    userId: UUID,
+    month: Date,
+    classification: number,
+    amount: number,
+  ): Promise<void> {
+    try {
+      const existingBudget = await this.budgetRepository.findOne({
+        where: {
+          user: { id: userId },
+          month,
+          classification: { id: classification },
+        },
+      })
+
+      if (existingBudget) {
+        existingBudget.amount = amount
+        await existingBudget.save()
+      } else {
+        await this.budgetRepository.save({
+          user: { id: userId }, // user_id를 user 객체로 변경
+          month,
+          classification,
+          amount,
+        } as DeepPartial<Budget>) // 형변환 추가
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 }

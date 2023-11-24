@@ -15,7 +15,7 @@ export function IsClassificationId(validationOptions?: ValidationOptions) {
         validate(value: any, ValidationArguments) {
           // 모든 키가 1~18 사이인지 확인합니다.
           return Object.keys(value).every(
-            (key) => 1 <= Number(key) && Number(key) <= 17,
+            (key) => 1 <= Number(key) && Number(key) <= 18,
           )
         },
       },
@@ -36,7 +36,7 @@ export function IsInteger(validationOptions?: ValidationOptions) {
           const values = Object.values(value)
           const isInvalid = values.some(
             (val) =>
-              typeof val !== 'number' || !Number.isInteger(val) || val <= 0,
+              typeof val !== 'number' || !Number.isInteger(val) || val < 0,
           )
           return !isInvalid
         },

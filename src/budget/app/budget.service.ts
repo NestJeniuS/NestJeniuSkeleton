@@ -2,11 +2,10 @@ import {
   Injectable,
   Inject,
   Logger,
-  UnauthorizedException,
   NotFoundException,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { ReqCreateBudgetDto } from '@budget/domain/dto/budget.app.dto'
+import { ReqBudgetDto } from '@budget/domain/dto/budget.app.dto'
 import { IBUDGET_SERVICE } from '@common/constants/provider.constant'
 import { IBudgetService } from '@budget/domain/interface/budget.service.interface'
 import { IBUDGET_REPOSITORY } from '@common/constants/provider.constant'
@@ -21,7 +20,7 @@ export class BudgetService implements IBudgetService {
     private readonly budgetRepository: IBudgetRepository,
   ) {}
 
-  async createBudget(req: ReqCreateBudgetDto): Promise<string> {
+  async createBudget(req: ReqBudgetDto): Promise<string> {
     try {
       const yearMonth = new Date(req.month) // month는 문자열
 
@@ -50,6 +49,27 @@ export class BudgetService implements IBudgetService {
     } catch (error) {
       console.log(error)
       throw new InternalServerErrorException('예산 설정에 실패했습니다.')
+    }
+  }
+
+  async updateBudget(req: ReqBudgetDto): Promise<string> {
+    try {
+      const yearMonth = new Date(req.month)
+
+      await Promise.all(
+        Object.entries(req.amount).map(async ([classification, budget]) => {
+          await this.budgetRepository.updateBudget(
+            req.userId,
+            yearMonth,
+            Number(classification),
+            budget,
+          )
+        }),
+      )
+      return '예산 변경에 성공하였습니다.'
+    } catch (error) {
+      console.log(error)
+      throw new InternalServerErrorException('예산 변경에 실패했습니다.')
     }
   }
 }
