@@ -56,13 +56,6 @@ export class BudgetRepository implements IBudgetRepository {
       if (existingBudget) {
         existingBudget.amount = amount
         await existingBudget.save()
-      } else {
-        await this.budgetRepository.save({
-          user: { id: userId }, // user_id를 user 객체로 변경
-          month,
-          classification,
-          amount,
-        } as DeepPartial<Budget>) // 형변환 추가
       }
     } catch (error) {
       console.error(error)
