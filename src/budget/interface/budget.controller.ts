@@ -12,13 +12,18 @@ import {
   HttpStatus,
   UsePipes,
   ValidationPipe,
+  Query,
 } from '@nestjs/common'
 import { IBudgetService } from '@budget/domain/interface/budget.service.interface'
 import { IBUDGET_SERVICE } from '@common/constants/provider.constant'
-import { ReqBudgetDto } from '@budget/domain/dto/budget.app.dto'
+import {
+  ReqBudgetDto,
+  ReqRecommendBudgetDto,
+} from '@budget/domain/dto/budget.app.dto'
 import { JwtAuthGuard } from '@auth/infra/passport/guards/jwt.guard'
 import { plainToClass } from 'class-transformer'
 import { Request } from 'express'
+import { config } from 'rxjs'
 
 @UseGuards(JwtAuthGuard)
 @Controller('budgets')
@@ -56,5 +61,20 @@ export class BudgetController {
       ...budget,
     })
     return budgets
+  }
+
+  @Get()
+  @UsePipes(ValidationPipe)
+  @HttpCode(HttpStatus.OK)
+  async getMonthlybudget(
+    @Req() req: Request,
+    @Query() totalBudget: ReqRecommendBudgetDto,
+  ): Promise<object> {
+    const userId = req.user.id
+    const recommendBudget = await this.budegetService.recommendBudget({
+      userId,
+      ...totalBudget,
+    })
+    return recommendBudget
   }
 }

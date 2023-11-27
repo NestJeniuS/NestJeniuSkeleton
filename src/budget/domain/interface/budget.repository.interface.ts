@@ -15,4 +15,5 @@ export interface IBudgetRepository {
     classification: number,
     amount: number,
   ): Promise<void>
+  getMonthlyBudgetRatio(month: Date): Promise<object>
 }

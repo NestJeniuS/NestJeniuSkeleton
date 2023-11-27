@@ -58,7 +58,35 @@ export class BudgetRepository implements IBudgetRepository {
         await existingBudget.save()
       }
     } catch (error) {
-      console.error(error)
+      throw new Error(`Failed : ${error.message}`)
+    }
+  }
+  async getMonthlyBudgetRatio(month: Date): Promise<object> {
+    try {
+      const query = this.budgetRepository
+        .createQueryBuilder('budget')
+        .select('budget.classification_id', 'classificationId')
+        .addSelect('SUM(budget.amount)', 'totalBudget')
+        .addSelect(
+          'ROUND((CAST(SUM(budget.amount) AS NUMERIC) / (SELECT CAST(SUM(amount) AS NUMERIC) FROM budget WHERE month = :month)) * 100, 2)',
+          'budgetRatio',
+        )
+        .where('budget.month = :month', { month }) // month 기준으로 필터링
+        .groupBy('budget.classification_id')
+
+      const categories = await query.getRawMany()
+
+      const budgetRatio = categories.reduce(
+        (acc, { classificationId, budgetRatio }) => {
+          acc[classificationId] = parseFloat(budgetRatio)
+          return acc
+        },
+        {},
+      )
+
+      return budgetRatio
+    } catch (error) {
+      throw new Error(`Failed : ${error.message}`)
     }
   }
 }

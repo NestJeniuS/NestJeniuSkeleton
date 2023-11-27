@@ -15,6 +15,7 @@ export const typeORMConfig = async (
     entities: [__dirname + '/../../**/*.entity.{js,ts}'], // 상대경로 지정 확실히 하기!
     synchronize: configService.get<boolean>('DB_SYNCHRONIZE') || false,
     namingStrategy: new SnakeNamingStrategy(),
-    logging: false,
+    logging: false, // 이 부분을 추가하여 디버그 로깅을 활성화합니다.
+    // logger: 'debug',
   }
 }

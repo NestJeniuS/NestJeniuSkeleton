@@ -1,18 +1,21 @@
 import {
   Injectable,
   Inject,
-  Logger,
   NotFoundException,
   InternalServerErrorException,
   ConflictException,
 } from '@nestjs/common'
-import { ReqBudgetDto } from '@budget/domain/dto/budget.app.dto'
-import { IBUDGET_SERVICE } from '@common/constants/provider.constant'
+import {
+  ReqBudgetDto,
+  ReqRecommendBudgetDto,
+} from '@budget/domain/dto/budget.app.dto'
 import { IBudgetService } from '@budget/domain/interface/budget.service.interface'
 import { IBUDGET_REPOSITORY } from '@common/constants/provider.constant'
 import { IBudgetRepository } from '@budget/domain/interface/budget.repository.interface'
-import { plainToClass } from 'class-transformer'
-import { UUID } from 'crypto'
+import {
+  calculateBudget,
+  calculateRecommendedBudget,
+} from '@common/utils/budgetRecommend'
 import {
   BUDGET_ALREADY_EXIST,
   BUDGET_NOTFOUND,
@@ -33,7 +36,6 @@ export class BudgetService implements IBudgetService {
         yearMonth,
         req.userId,
       )
-      console.log(existingBudget)
       // 해당 달에 이미 예산이 있는지 확인
       if (Object.keys(existingBudget).length > 0) {
         throw new ConflictException(BUDGET_ALREADY_EXIST)
@@ -52,7 +54,6 @@ export class BudgetService implements IBudgetService {
         return '예산 설정에 성공하였습니다.'
       }
     } catch (error) {
-      console.log(error)
       if (error instanceof ConflictException) {
         throw error
       } else {
@@ -68,7 +69,6 @@ export class BudgetService implements IBudgetService {
         yearMonth,
         req.userId,
       )
-      // console.log(existingBudget)
       // 해당 달에 이미 예산이 있는지 확인
       if (Object.keys(existingBudget).length > 0) {
         await Promise.all(
@@ -86,12 +86,33 @@ export class BudgetService implements IBudgetService {
         throw new NotFoundException(BUDGET_NOTFOUND)
       }
     } catch (error) {
-      // console.log(error)
       if (error instanceof NotFoundException) {
         throw error
       } else {
         throw new InternalServerErrorException('예산 변경에 실패했습니다.')
       }
+    }
+  }
+
+  async recommendBudget(req: ReqRecommendBudgetDto): Promise<object> {
+    try {
+      const yearMonth = new Date(req.month)
+      const findBudgetRatio =
+        await this.budgetRepository.getMonthlyBudgetRatio(yearMonth)
+
+      const totalBudget = Number(req.total)
+
+      let recommendedBudget = calculateRecommendedBudget(
+        findBudgetRatio,
+        (ratio: number) => calculateBudget(totalBudget, ratio),
+      )
+
+      return {
+        message: '정상적으로 추천 예산이 생성되었습니다.',
+        recommendedBudget,
+      }
+    } catch (error) {
+      throw new InternalServerErrorException('추천예산 계산에 실패했습니다.')
     }
   }
 }
