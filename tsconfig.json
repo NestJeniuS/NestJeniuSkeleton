@@ -16,6 +16,17 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@src/*": ["src"],
+      "@common/*": ["src/common/*"],
+      "@user/*": ["src/user/*"],
+      "@auth/*": ["src/auth/*"],
+      "@redis/*": ["src/redis/*"],
+      "@cache/*": ["src/cache/*"],
+      "@expenses/*": ["src/expenses/*"],
+      "@classification/*": ["src/classification/*"],
+      "@budget/*": ["src/budget/*"]
+    }
   }
 }
