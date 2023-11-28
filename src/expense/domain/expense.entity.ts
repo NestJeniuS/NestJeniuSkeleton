@@ -12,7 +12,7 @@ import { Budget } from 'src/budget/domain/budget.entity'
 import { User } from 'src/user/domain/entity/user.entity'
 
 @Entity()
-export class Expenses extends BaseEntity {
+export class Expense extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 

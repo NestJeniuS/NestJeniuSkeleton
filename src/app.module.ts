@@ -10,6 +10,7 @@ import { RequestLoggingMiddleware } from '@common/middlewares/request-logging.mi
 import { RedisCacheModule } from '@cache/cache.module'
 import { ClassificationModule } from '@classification/interface/classification.module'
 import { BudgetModule } from '@budget/interface/budget.module'
+import { ExpenseModule } from '@expense/interface/expense.module'
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -34,6 +35,7 @@ import { BudgetModule } from '@budget/interface/budget.module'
     RedisCacheModule,
     ClassificationModule,
     BudgetModule,
+    ExpenseModule,
   ],
 })
 export class AppModule {}
