@@ -1,10 +1,15 @@
-import { Module } from '@nestjs/common'
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { typeORMConfig } from './config/typeorm.config'
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
-
+import { WinstonModule } from 'nest-winston'
+import { getWinstonLogger } from '@common/utils/winston.util'
+import { typeORMConfig } from '@common/configs/typeorm.config'
+import { AuthModule } from './auth/interface/auth.module'
+import { UserModule } from './user/interface/user.module'
+import { RequestLoggingMiddleware } from '@common/middlewares/request-logging.middleware'
+import { RedisCacheModule } from '@cache/cache.module'
+import { ClassificationModule } from '@classification/interface/classification.module'
+import { BudgetModule } from '@budget/interface/budget.module'
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -23,8 +28,12 @@ import { UserModule } from './user/user.module';
       useFactory: async (configService: ConfigService) =>
         await typeORMConfig(configService),
     }),
+    WinstonModule.forRoot(getWinstonLogger(process.env.NODE_ENV, 'api')),
     AuthModule,
     UserModule,
+    RedisCacheModule,
+    ClassificationModule,
+    BudgetModule,
   ],
 })
 export class AppModule {}
