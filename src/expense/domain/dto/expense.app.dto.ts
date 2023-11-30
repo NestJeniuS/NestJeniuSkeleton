@@ -31,25 +31,8 @@ export class ReqExpenseDto {
   classificationId: number
 }
 
-// export class GetList {
-//   @IsString()
-//   startDate: string
-
-//   @IsString()
-//   endDate: string
-
-//   @IsOptional()
-//   @IsNumber()
-//   @Type(() => Number)
-//   categoryId?: number
-
-//   @IsOptional()
-//   @IsNumber()
-//   @Type(() => Number)
-//   minAmount?: number
-
-//   @IsOptional()
-//   @IsNumber()
-//   @Type(() => Number)
-//   maxAmount?: number
-// }
+export class ReqMonthlyDto {
+  readonly userId: UUID
+  @IsNotEmpty({ message: '지출 월은 필수적으로 입력해야 합니다.' })
+  readonly month: string
+}

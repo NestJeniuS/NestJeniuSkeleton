@@ -5,7 +5,10 @@ import {
   InternalServerErrorException,
   ConflictException,
 } from '@nestjs/common'
-import { ReqExpenseDto } from '@expense/domain/dto/expense.app.dto'
+import {
+  ReqExpenseDto,
+  ReqMonthlyDto,
+} from '@expense/domain/dto/expense.app.dto'
 import {
   IBUDGET_REPOSITORY,
   IEXPENSE_REPOSITORY,
@@ -24,36 +27,34 @@ export class ExpenseService implements IExpenseService {
   ) {}
 
   async createExpense(req: ReqExpenseDto): Promise<string> {
+    const {
+      classificationId,
+      userId,
+      amount,
+      memo,
+      exception,
+      date: reqDate,
+    } = req
+    const date = new Date(reqDate)
+    const year = date.getFullYear()
+    const month = date.getMonth()
+
+    const monthDate = new Date(year, month)
+
     try {
-      const classificationId = req.classificationId
-      const userId = req.userId
-      const amount = req.amount
-      const memo = req.memo
-      const exception = req.exception
-
-      const date = new Date(req.date)
-      const year = date.getFullYear() // 년도를 가져옵니다.
-      const month = date.getMonth() // getMonth()는 0부터 시작하므로 month+1을 해주지 않습니다.
-
-      // 연도와 월을 설정한 새 Date 객체를 생성합니다.
-      const monthDate = new Date(year, month)
-
-      //   console.log(monthDate, 1)
-
       const budget = await this.budgetRepository.findBudgetByDate(
         userId,
         classificationId,
         monthDate,
       )
-      let budgetId: number
 
-      if (Object.keys(budget).length > 0) {
-        // 배열이 비어있지 않은지 확인합니다.
-        budgetId = budget[0].id
-        console.log(budgetId)
-      } else {
+      if (!budget || Object.keys(budget).length === 0) {
         console.log('예산을 찾을 수 없습니다.')
+        return
       }
+
+      const budgetId = budget[0].id
+
       await this.expenseRepository.createExpense(
         userId,
         classificationId,
@@ -63,8 +64,6 @@ export class ExpenseService implements IExpenseService {
         memo,
         exception,
       )
-
-      //   console.log(1)
       return '지출 설정에 성공하였습니다.'
     } catch (error) {
       if (error instanceof ConflictException) {
@@ -74,4 +73,56 @@ export class ExpenseService implements IExpenseService {
       }
     }
   }
+  async getMonthlyExpense(req: ReqMonthlyDto): Promise<object> {
+    try {
+      const yearMonth = new Date(req.month) // month는 문자열
+      const month = yearMonth.getMonth() + 1 // JavaScript에서 월은 0부터 시작하므로 1을 더해주어야 합니다.
+      //   console.log(month)
+      const totalMonthlyExpenseResult =
+        await this.expenseRepository.getTotalMonthlyExpense(
+          req.userId,
+          yearMonth,
+        )
+      console.log(totalMonthlyExpenseResult)
+
+      const totalWeeklyExpenseResult =
+        await this.expenseRepository.getWeeklyExpense(req.userId, yearMonth)
+      console.log(totalWeeklyExpenseResult)
+      // 결과를 저장할 객체를 초기화합니다.
+      //   console.log(totalWeeklyExpenseResult[0], 1)
+      let result = {}
+      console.log('result initialized', result)
+      // 월간 총 지출을 객체에 추가합니다.
+      result[`${month}월 총 지출`] = Number(totalMonthlyExpenseResult['total'])
+      console.log('result after adding total expense', result)
+
+      //   //   주간 지출을 객체에 추가합니다.
+      Object.entries(totalWeeklyExpenseResult).forEach(([key, item], index) => {
+        console.log(`item for week ${index + 1}:`, item)
+        result[`${month}월 ${index + 1}주`] = Number(item['totalExpense'])
+      })
+
+      return result
+    } catch (error) {
+      throw new InternalServerErrorException(
+        '한달 지출 금액 불러오기에 실패했습니다.',
+      )
+    }
+  }
+
+  //   async updateExpense(req: ReqExpenseDto): Promise<string> {
+  //     try {
+  //         const {
+  //             classificationId,
+  //             userId,
+  //             amount,
+  //             memo,
+  //             exception,
+  //             date: reqDate,
+  //           } = req
+  //           const date = new Date(reqDate)
+
+  //     }
+
+  //   }
 }

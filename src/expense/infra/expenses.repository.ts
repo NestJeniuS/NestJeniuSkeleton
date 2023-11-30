@@ -45,4 +45,63 @@ export class ExpenseRepository implements IExpenseRepository {
       throw error
     }
   }
+
+  async getTotalMonthlyExpense(userId: UUID, date: Date): Promise<object> {
+    const startDate = date // 입력된 날짜의 월의 시작일 (예: 2023-11-01)
+    const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0) // 입력된 날짜의 월의 마지막일 (예: 2023-11-30)
+    // console.log(endDate)
+    const totalExpense = await this.expenseRepository
+      .createQueryBuilder('expense')
+      .select('SUM(expense.amount)', 'total')
+      .where('expense.user = :userId', { userId })
+      .andWhere('expense.date >= :startDate', { startDate })
+      .andWhere('expense.date <= :endDate', { endDate })
+      .getRawOne()
+
+    return totalExpense // { total: "<월간 총 지출액>" }
+  }
+  async getWeeklyExpense(userId: UUID, date: Date): Promise<object[]> {
+    // console.log(date)
+    const startDate = date
+    const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+    // console.log(startDate, endDate)
+    const weeks = [
+      {
+        start: new Date(startDate),
+        end: new Date(startDate.getFullYear(), startDate.getMonth(), 7),
+      },
+      {
+        start: new Date(startDate.getFullYear(), startDate.getMonth(), 8),
+        end: new Date(startDate.getFullYear(), startDate.getMonth(), 14),
+      },
+      {
+        start: new Date(startDate.getFullYear(), startDate.getMonth(), 15),
+        end: new Date(startDate.getFullYear(), startDate.getMonth(), 21),
+      },
+      {
+        start: new Date(startDate.getFullYear(), startDate.getMonth(), 22),
+        end: new Date(endDate),
+      },
+    ]
+
+    const weeklyExpenses = []
+
+    for (const week of weeks) {
+      const weeklyExpense = await this.expenseRepository
+        .createQueryBuilder('expense')
+        .select('SUM(expense.amount)', 'total')
+        .where('expense.user = :userId', { userId })
+        .andWhere('expense.date >= :startDate', { startDate: week.start })
+        .andWhere('expense.date <= :endDate', { endDate: week.end })
+        .getRawOne()
+
+      weeklyExpenses.push({
+        weekStart: week.start.toISOString().split('T')[0],
+        weekEnd: week.end.toISOString().split('T')[0],
+        totalExpense: weeklyExpense.total,
+      })
+    }
+
+    return weeklyExpenses
+  }
 }

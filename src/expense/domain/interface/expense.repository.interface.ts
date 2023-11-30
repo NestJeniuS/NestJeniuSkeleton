@@ -12,4 +12,6 @@ export interface IExpenseRepository {
     memo: string,
     exception: boolean,
   ): Promise<object>
+  getTotalMonthlyExpense(userId: UUID, date: Date): Promise<object>
+  getWeeklyExpense(userId: UUID, date: Date): Promise<object>
 }

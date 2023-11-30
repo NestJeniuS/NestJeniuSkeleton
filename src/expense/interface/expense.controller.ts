@@ -16,7 +16,10 @@ import {
 } from '@nestjs/common'
 import { IExpenseService } from '@expense/domain/interface/expense.service.interface'
 import { IEXPENSE_SERVICE } from '@common/constants/provider.constant'
-import { ReqExpenseDto } from '@expense/domain/dto/expense.app.dto'
+import {
+  ReqExpenseDto,
+  ReqMonthlyDto,
+} from '@expense/domain/dto/expense.app.dto'
 import { JwtAuthGuard } from '@auth/infra/passport/guards/jwt.guard'
 import { Request } from 'express'
 import { config } from 'rxjs'
@@ -43,4 +46,34 @@ export class ExpenseController {
     })
     return expenses
   }
+
+  @Get()
+  @UsePipes(ValidationPipe)
+  @HttpCode(HttpStatus.OK)
+  async getMonthlyExpense(
+    @Req() req: Request,
+    @Query() month: ReqMonthlyDto,
+  ): Promise<object> {
+    const userId = req.user.id
+    const monthlyExpenses = await this.expenseService.getMonthlyExpense({
+      userId,
+      ...month,
+    })
+    return monthlyExpenses
+  }
+
+  // @Put()
+  // @UsePipes(ValidationPipe)
+  // @HttpCode(HttpStatus.OK)
+  // async updateExpense(
+  //   @Req() req: Request,
+  //   @Body() expense: ReqExpenseDto,
+  // ): Promise<string> {
+  //   const userId = req.user.id
+  //   const expenses = await this.expenseService.updateExpense({
+  //     userId,
+  //     ...expense,
+  //   })
+  //   return expenses
+  // }
 }
