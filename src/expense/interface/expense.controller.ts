@@ -15,13 +15,9 @@ import {
   Query,
 } from '@nestjs/common'
 import { IExpenseService } from '@expense/domain/interface/expense.service.interface'
-import {
-  IBUDGET_SERVICE,
-  IEXPENSE_SERVICE,
-} from '@common/constants/provider.constant'
+import { IEXPENSE_SERVICE } from '@common/constants/provider.constant'
 import { ReqExpenseDto } from '@expense/domain/dto/expense.app.dto'
 import { JwtAuthGuard } from '@auth/infra/passport/guards/jwt.guard'
-import { plainToClass } from 'class-transformer'
 import { Request } from 'express'
 import { config } from 'rxjs'
 
@@ -41,7 +37,7 @@ export class ExpenseController {
     @Body() expense: ReqExpenseDto,
   ): Promise<string> {
     const userId = req.user.id
-    const expenses = await this.expenseService.createBudget({
+    const expenses = await this.expenseService.createExpense({
       userId,
       ...expense,
     })

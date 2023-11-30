@@ -1,19 +1,15 @@
-import { Budget } from '../budget.entity'
+import { ReqExpenseDto } from '../dto/expense.app.dto'
+import { Expense } from '../expense.entity'
 import { UUID } from 'crypto'
 
 export interface IExpenseRepository {
-  createBudget(
+  createExpense(
     userId: UUID,
-    month: Date,
-    classification: number,
+    classificationId: number,
+    budgetId: number,
+    date: Date,
     amount: number,
-  ): Promise<Budget>
-  findSameBudget(month: Date, userId: UUID): Promise<object>
-  updateBudget(
-    userId: UUID,
-    month: Date,
-    classification: number,
-    amount: number,
-  ): Promise<void>
-  getMonthlyBudgetRatio(month: Date): Promise<object>
+    memo: string,
+    exception: boolean,
+  ): Promise<object>
 }

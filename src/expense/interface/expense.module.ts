@@ -7,12 +7,15 @@ import { UserModule } from '@user/interface/user.module'
 import { ExpenseProvider } from './expense.provider'
 import { Expense } from '@expense/domain/expense.entity'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { BudgetProvider } from '@budget/interface/budget.provider'
+import { BudgetModule } from '@budget/interface/budget.module'
 
 @Module({
   controllers: [ExpenseController],
   providers: [...ExpenseProvider],
   exports: [...ExpenseProvider],
   imports: [
+    BudgetModule,
     UserModule,
     TypeOrmModule.forFeature([Expense]),
     JwtModule.registerAsync({

@@ -9,6 +9,11 @@ export interface IBudgetRepository {
     amount: number,
   ): Promise<Budget>
   findSameBudget(month: Date, userId: UUID): Promise<object>
+  findBudgetByDate(
+    userId: UUID,
+    classificationId: number,
+    month: Date,
+  ): Promise<object>
   updateBudget(
     userId: UUID,
     month: Date,

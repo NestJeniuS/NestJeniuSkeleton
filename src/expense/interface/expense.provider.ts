@@ -4,8 +4,9 @@ import { UserRepository } from '@user/infra/userRepository'
 import {
   IEXPENSE_REPOSITORY,
   IEXPENSE_SERVICE,
-  IUSER_REPOSITORY,
+  IBUDGET_REPOSITORY,
 } from '@common/constants/provider.constant'
+import { BudgetRepository } from '@budget/infra/budgetRepository'
 
 export const ExpenseProvider = [
   {
@@ -17,7 +18,7 @@ export const ExpenseProvider = [
     useClass: ExpenseRepository,
   },
   // {
-  //   provide: IUSER_REPOSITORY,
-  //   useClass: UserRepository,
+  //   provide: IBUDGET_REPOSITORY,
+  //   useClass: BudgetRepository,
   // },
 ]

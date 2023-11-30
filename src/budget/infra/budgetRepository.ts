@@ -38,6 +38,22 @@ export class BudgetRepository implements IBudgetRepository {
     })
     return existingBudget
   }
+
+  async findBudgetByDate(
+    userId: UUID,
+    classificationId: number,
+    month: Date,
+  ): Promise<object> {
+    const budget = await this.budgetRepository.find({
+      where: {
+        user: { id: userId },
+        classification: { id: classificationId },
+        month: month,
+      },
+    })
+    return budget
+  }
+
   async updateBudget(
     userId: UUID,
     month: Date,

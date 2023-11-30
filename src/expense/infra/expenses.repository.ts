@@ -1,92 +1,48 @@
 import { Injectable } from '@nestjs/common'
-import { Budget } from '@budget/domain/budget.entity'
+import { Expense } from '@expense/domain/expense.entity'
 import { IExpenseRepository } from '@expense/domain/interface/expense.repository.interface'
 import { plainToClass } from 'class-transformer'
-import { Repository, DeepPartial } from 'typeorm'
+import { Repository, DeepPartial, QueryFailedError } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { UUID } from 'crypto'
+import { ReqExpenseDto } from '@expense/domain/dto/expense.app.dto'
 
 @Injectable()
 export class ExpenseRepository implements IExpenseRepository {
   constructor(
-    @InjectRepository(Budget)
-    private readonly budgetRepository: Repository<Budget>,
+    @InjectRepository(Expense)
+    private readonly expenseRepository: Repository<Expense>,
   ) {}
 
-  async createBudget(
+  async createExpense(
     userId: UUID,
-    month: Date,
-    classification: number,
+    classificationId: number,
+    budgetId: number,
+    date: Date,
     amount: number,
-  ): Promise<Budget> {
-    // console.log('Received userId:', userId) // 로그 추가
-    const result = await this.budgetRepository.save({
-      user: { id: userId }, // user_id를 user 객체로 변경
-      month,
-      classification,
-      amount,
-    } as DeepPartial<Budget>) // 형변환 추가
-    return plainToClass(Budget, result)
-  }
-
-  async findSameBudget(yearMonth: Date, userId: UUID): Promise<object> {
-    const existingBudget = await this.budgetRepository.find({
-      where: {
-        month: yearMonth,
+    memo: string,
+    exception: boolean,
+  ): Promise<object> {
+    // console.log(budgetId)
+    try {
+      const result = await this.expenseRepository.save({
         user: { id: userId },
-      },
-    })
-    return existingBudget
-  }
-  async updateBudget(
-    userId: UUID,
-    month: Date,
-    classification: number,
-    amount: number,
-  ): Promise<void> {
-    try {
-      const existingBudget = await this.budgetRepository.findOne({
-        where: {
-          user: { id: userId },
-          month,
-          classification: { id: classification },
-        },
+        classification: { id: classificationId },
+        budget: { id: budgetId },
+        date,
+        amount,
+        memo,
+        exception,
       })
-
-      if (existingBudget) {
-        existingBudget.amount = amount
-        await existingBudget.save()
+      console.log(result)
+      return result
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        console.log('실행된 쿼리:', error.query) // 실패한 쿼리를 출력합니다.
+        console.log('사용된 매개변수:', error.parameters) // 쿼리에 사용된 매개변수를 출력합니다.
       }
-    } catch (error) {
-      throw new Error(`Failed : ${error.message}`)
-    }
-  }
-  async getMonthlyBudgetRatio(month: Date): Promise<object> {
-    try {
-      const query = this.budgetRepository
-        .createQueryBuilder('budget')
-        .select('budget.classification_id', 'classificationId')
-        .addSelect('SUM(budget.amount)', 'totalBudget')
-        .addSelect(
-          'ROUND((CAST(SUM(budget.amount) AS NUMERIC) / (SELECT CAST(SUM(amount) AS NUMERIC) FROM budget WHERE month = :month)) * 100, 2)',
-          'budgetRatio',
-        )
-        .where('budget.month = :month', { month }) // month 기준으로 필터링
-        .groupBy('budget.classification_id')
-
-      const categories = await query.getRawMany()
-
-      const budgetRatio = categories.reduce(
-        (acc, { classificationId, budgetRatio }) => {
-          acc[classificationId] = parseFloat(budgetRatio)
-          return acc
-        },
-        {},
-      )
-
-      return budgetRatio
-    } catch (error) {
-      throw new Error(`Failed : ${error.message}`)
+      console.error('Expense 생성 중 오류가 발생했습니다:', error)
+      throw error
     }
   }
 }

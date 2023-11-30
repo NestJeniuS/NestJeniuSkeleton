@@ -8,18 +8,21 @@ import {
   IsOptional,
 } from 'class-validator'
 import { Type } from 'class-transformer'
+import { UUID } from 'crypto'
 
 export class ReqExpenseDto {
+  readonly userId: UUID
+
   @IsNotEmpty({ message: '지출 금액은 필수적으로 입력해야 합니다.' })
   @IsNumber()
-  expense: number
+  amount: number
 
   @IsNotEmpty({ message: '지출 일자는 필수적으로 입력해야 합니다.' })
   @IsDateString()
   date: Date
 
   @IsString()
-  description?: string
+  memo?: string
 
   @IsBoolean()
   exception: boolean
@@ -28,25 +31,25 @@ export class ReqExpenseDto {
   classificationId: number
 }
 
-export class GetList {
-  @IsString()
-  startDate: string
+// export class GetList {
+//   @IsString()
+//   startDate: string
 
-  @IsString()
-  endDate: string
+//   @IsString()
+//   endDate: string
 
-  @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  categoryId?: number
+//   @IsOptional()
+//   @IsNumber()
+//   @Type(() => Number)
+//   categoryId?: number
 
-  @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  minAmount?: number
+//   @IsOptional()
+//   @IsNumber()
+//   @Type(() => Number)
+//   minAmount?: number
 
-  @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  maxAmount?: number
-}
+//   @IsOptional()
+//   @IsNumber()
+//   @Type(() => Number)
+//   maxAmount?: number
+// }

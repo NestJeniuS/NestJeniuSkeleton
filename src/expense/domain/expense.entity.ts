@@ -16,14 +16,14 @@ export class Expense extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @ManyToOne(() => Classification, (classification) => classification.id)
-  classification: number
+  @ManyToOne(() => Classification, (classification) => classification.expenses)
+  classification: Classification
 
-  @ManyToOne(() => Budget, (budget) => budget.id)
-  budget: number
+  @ManyToOne(() => Budget, (budget) => budget.expenses)
+  budget: Budget
 
-  @ManyToOne(() => User, (user) => user.id)
-  user: number
+  @ManyToOne(() => User, (user) => user.expenses)
+  user: User
 
   @Column({ type: 'date', nullable: true })
   date: Date
