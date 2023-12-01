@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common'
 import { Expense } from '@expense/domain/expense.entity'
 import { IExpenseRepository } from '@expense/domain/interface/expense.repository.interface'
-import { plainToClass } from 'class-transformer'
+import { plainToClass, plainToInstance } from 'class-transformer'
 import { Repository, DeepPartial, QueryFailedError } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { UUID } from 'crypto'
-import { ReqExpenseDto } from '@expense/domain/dto/expense.app.dto'
+import {
+  ReqExpenseDto,
+  ResGetExpenseDto,
+} from '@expense/domain/dto/expense.app.dto'
 
 @Injectable()
 export class ExpenseRepository implements IExpenseRepository {
@@ -103,5 +106,27 @@ export class ExpenseRepository implements IExpenseRepository {
     }
 
     return weeklyExpenses
+  }
+
+  async getAllExpense(userId: UUID, date: Date): Promise<Expense[]> {
+    try {
+      const formattedDate = date.toISOString().slice(0, 7) // YYYY-MM format
+      const getAllExpense = await this.expenseRepository
+        .createQueryBuilder('expense')
+        .leftJoinAndSelect('expense.classification', 'classification')
+        .where("TO_CHAR(expense.date, 'YYYY-MM') = :formattedDate", {
+          formattedDate,
+        })
+        .andWhere('expense.user.id = :userId', { userId })
+        .getMany()
+
+      //   console.log(typeof getAllExpense)
+      // plainToInstance 를 사용하여 평문 객체를 Expense 클래스의 인스턴스로 변환
+      const expenses: Expense[] = plainToInstance(Expense, getAllExpense)
+      //   console.log(typeof expenses)
+      return expenses
+    } catch (error) {
+      // error handling
+    }
   }
 }

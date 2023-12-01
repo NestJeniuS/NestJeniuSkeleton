@@ -8,6 +8,7 @@ import {
 import {
   ReqExpenseDto,
   ReqMonthlyDto,
+  ResGetExpenseDto,
 } from '@expense/domain/dto/expense.app.dto'
 import {
   IBUDGET_REPOSITORY,
@@ -83,18 +84,18 @@ export class ExpenseService implements IExpenseService {
           req.userId,
           yearMonth,
         )
-      console.log(totalMonthlyExpenseResult)
+      //   console.log(totalMonthlyExpenseResult)
 
       const totalWeeklyExpenseResult =
         await this.expenseRepository.getWeeklyExpense(req.userId, yearMonth)
-      console.log(totalWeeklyExpenseResult)
+      //   console.log(totalWeeklyExpenseResult)
       // 결과를 저장할 객체를 초기화합니다.
       //   console.log(totalWeeklyExpenseResult[0], 1)
       let result = {}
-      console.log('result initialized', result)
+      //   console.log('result initialized', result)
       // 월간 총 지출을 객체에 추가합니다.
       result[`${month}월 총 지출`] = Number(totalMonthlyExpenseResult['total'])
-      console.log('result after adding total expense', result)
+      //   console.log('result after adding total expense', result)
 
       //   //   주간 지출을 객체에 추가합니다.
       Object.entries(totalWeeklyExpenseResult).forEach(([key, item], index) => {
@@ -107,6 +108,27 @@ export class ExpenseService implements IExpenseService {
       throw new InternalServerErrorException(
         '한달 지출 금액 불러오기에 실패했습니다.',
       )
+    }
+  }
+
+  async getAllExpense(req: ReqMonthlyDto): Promise<ResGetExpenseDto[]> {
+    try {
+      const yearMonth = new Date(req.month)
+      const expenses = await this.expenseRepository.getAllExpense(
+        req.userId,
+        yearMonth,
+      )
+
+      const result = expenses.map((expense) => ({
+        id: expense.id,
+        date: expense.date,
+        amount: expense.amount,
+        classification: expense.classification.classification,
+      }))
+
+      return result
+    } catch (error) {
+      // error handling
     }
   }
 

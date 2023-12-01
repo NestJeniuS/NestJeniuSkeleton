@@ -36,3 +36,10 @@ export class ReqMonthlyDto {
   @IsNotEmpty({ message: '지출 월은 필수적으로 입력해야 합니다.' })
   readonly month: string
 }
+
+export class ResGetExpenseDto {
+  id: number
+  date: Date
+  amount: number
+  classification: string
+}

@@ -19,6 +19,7 @@ import { IEXPENSE_SERVICE } from '@common/constants/provider.constant'
 import {
   ReqExpenseDto,
   ReqMonthlyDto,
+  ResGetExpenseDto,
 } from '@expense/domain/dto/expense.app.dto'
 import { JwtAuthGuard } from '@auth/infra/passport/guards/jwt.guard'
 import { Request } from 'express'
@@ -60,6 +61,21 @@ export class ExpenseController {
       ...month,
     })
     return monthlyExpenses
+  }
+
+  @Get('list')
+  @UsePipes(ValidationPipe)
+  @HttpCode(HttpStatus.OK)
+  async getAllExpense(
+    @Req() req: Request,
+    @Query() month: ReqMonthlyDto,
+  ): Promise<ResGetExpenseDto[]> {
+    const userId = req.user.id
+    const getAllExpense = await this.expenseService.getAllExpense({
+      userId,
+      ...month,
+    })
+    return getAllExpense
   }
 
   // @Put()
