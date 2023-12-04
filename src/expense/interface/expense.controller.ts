@@ -13,12 +13,16 @@ import {
   UsePipes,
   ValidationPipe,
   Query,
+  Param,
+  ParseIntPipe,
 } from '@nestjs/common'
 import { IExpenseService } from '@expense/domain/interface/expense.service.interface'
 import { IEXPENSE_SERVICE } from '@common/constants/provider.constant'
 import {
+  ReqDetailExpenseDto,
   ReqExpenseDto,
   ReqMonthlyDto,
+  ResDetailExpenseDto,
   ResGetExpenseDto,
 } from '@expense/domain/dto/expense.app.dto'
 import { JwtAuthGuard } from '@auth/infra/passport/guards/jwt.guard'
@@ -61,6 +65,18 @@ export class ExpenseController {
       ...month,
     })
     return monthlyExpenses
+  }
+
+  @Get(':id')
+  @UsePipes(ValidationPipe)
+  @HttpCode(HttpStatus.OK)
+  async getExpense(
+    @Req() req: Request,
+    @Param('id', ParseIntPipe) expenseId: number,
+  ): Promise<ResDetailExpenseDto> {
+    const userId = req.user.id
+    const getExpense = await this.expenseService.getExpense(expenseId, userId)
+    return getExpense
   }
 
   @Get('list')

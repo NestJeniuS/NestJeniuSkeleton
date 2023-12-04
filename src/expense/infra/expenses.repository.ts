@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { UUID } from 'crypto'
 import {
   ReqExpenseDto,
+  ResDetailExpenseDto,
   ResGetExpenseDto,
 } from '@expense/domain/dto/expense.app.dto'
 
@@ -128,5 +129,16 @@ export class ExpenseRepository implements IExpenseRepository {
     } catch (error) {
       // error handling
     }
+  }
+
+  async getExpense(
+    userId: UUID,
+    expenseId: number,
+  ): Promise<ResDetailExpenseDto> {
+    const result = await this.expenseRepository.findOne({
+      where: { id: expenseId, user: { id: userId } },
+    })
+    const expense: Expense = plainToInstance(Expense, result)
+    return expense
   }
 }

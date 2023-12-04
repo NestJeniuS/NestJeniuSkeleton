@@ -6,8 +6,10 @@ import {
   ConflictException,
 } from '@nestjs/common'
 import {
+  ReqDetailExpenseDto,
   ReqExpenseDto,
   ReqMonthlyDto,
+  ResDetailExpenseDto,
   ResGetExpenseDto,
 } from '@expense/domain/dto/expense.app.dto'
 import {
@@ -17,6 +19,7 @@ import {
 import { IExpenseService } from '@expense/domain/interface/expense.service.interface'
 import { IExpenseRepository } from '@expense/domain/interface/expense.repository.interface'
 import { IBudgetRepository } from '@budget/domain/interface/budget.repository.interface'
+import { UUID } from 'crypto'
 
 @Injectable()
 export class ExpenseService implements IExpenseService {
@@ -129,6 +132,18 @@ export class ExpenseService implements IExpenseService {
       return result
     } catch (error) {
       // error handling
+    }
+  }
+
+  async getExpense(id: number, userId: UUID): Promise<ResDetailExpenseDto> {
+    try {
+      console.log(id)
+      const result = await this.expenseRepository.getExpense(userId, id)
+      return result
+    } catch (error) {
+      throw new InternalServerErrorException(
+        '상세지출 내역 가져오기에 실패했습니다.',
+      )
     }
   }
 
