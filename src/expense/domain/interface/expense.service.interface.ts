@@ -3,6 +3,7 @@ import {
   ReqDetailExpenseDto,
   ReqExpenseDto,
   ReqMonthlyDto,
+  ResClassificationExpenseDto,
   ResDetailExpenseDto,
   ResGetExpenseDto,
 } from '../dto/expense.app.dto'
@@ -12,5 +13,8 @@ export interface IExpenseService {
   getMonthlyExpense(req: ReqMonthlyDto): Promise<object>
   getAllExpense(req: ReqMonthlyDto): Promise<ResGetExpenseDto[]>
   getExpense(id: number, userId: UUID): Promise<ResDetailExpenseDto>
+  getTotalExpenseByClassification(
+    userId: UUID,
+  ): Promise<ResClassificationExpenseDto[]>
   // updateExpense(req: ReqExpenseDto): Promise<string>
 }

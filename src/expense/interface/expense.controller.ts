@@ -19,9 +19,11 @@ import {
 import { IExpenseService } from '@expense/domain/interface/expense.service.interface'
 import { IEXPENSE_SERVICE } from '@common/constants/provider.constant'
 import {
+  ReqClassificationExpenseDto,
   ReqDetailExpenseDto,
   ReqExpenseDto,
   ReqMonthlyDto,
+  ResClassificationExpenseDto,
   ResDetailExpenseDto,
   ResGetExpenseDto,
 } from '@expense/domain/dto/expense.app.dto'
@@ -65,6 +67,18 @@ export class ExpenseController {
       ...month,
     })
     return monthlyExpenses
+  }
+
+  @Get('classification')
+  @UsePipes(ValidationPipe)
+  @HttpCode(HttpStatus.OK)
+  async getTotalExpenseByClassification(
+    @Req() req: Request,
+  ): Promise<ResClassificationExpenseDto[]> {
+    const userId = req.user.id
+    const getTotalExpenseByClassification =
+      await this.expenseService.getTotalExpenseByClassification(userId)
+    return getTotalExpenseByClassification
   }
 
   @Get(':id')

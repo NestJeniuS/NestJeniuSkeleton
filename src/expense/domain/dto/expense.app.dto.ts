@@ -53,3 +53,12 @@ export class ResDetailExpenseDto {
   amount: number
   memo: string
 }
+
+export class ReqClassificationExpenseDto {
+  userId: UUID
+}
+
+export class ResClassificationExpenseDto {
+  classificationId: number
+  total: string
+}

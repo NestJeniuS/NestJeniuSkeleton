@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { UUID } from 'crypto'
 import {
   ReqExpenseDto,
+  ResClassificationExpenseDto,
   ResDetailExpenseDto,
   ResGetExpenseDto,
 } from '@expense/domain/dto/expense.app.dto'
@@ -53,7 +54,7 @@ export class ExpenseRepository implements IExpenseRepository {
   async getTotalMonthlyExpense(userId: UUID, date: Date): Promise<object> {
     const startDate = date // 입력된 날짜의 월의 시작일 (예: 2023-11-01)
     const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0) // 입력된 날짜의 월의 마지막일 (예: 2023-11-30)
-    // console.log(endDate)
+
     const totalExpense = await this.expenseRepository
       .createQueryBuilder('expense')
       .select('SUM(expense.amount)', 'total')
@@ -65,10 +66,9 @@ export class ExpenseRepository implements IExpenseRepository {
     return totalExpense // { total: "<월간 총 지출액>" }
   }
   async getWeeklyExpense(userId: UUID, date: Date): Promise<object[]> {
-    // console.log(date)
     const startDate = date
     const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0)
-    // console.log(startDate, endDate)
+
     const weeks = [
       {
         start: new Date(startDate),
@@ -121,10 +121,8 @@ export class ExpenseRepository implements IExpenseRepository {
         .andWhere('expense.user.id = :userId', { userId })
         .getMany()
 
-      //   console.log(typeof getAllExpense)
-      // plainToInstance 를 사용하여 평문 객체를 Expense 클래스의 인스턴스로 변환
       const expenses: Expense[] = plainToInstance(Expense, getAllExpense)
-      //   console.log(typeof expenses)
+
       return expenses
     } catch (error) {
       // error handling
@@ -140,5 +138,29 @@ export class ExpenseRepository implements IExpenseRepository {
     })
     const expense: Expense = plainToInstance(Expense, result)
     return expense
+  }
+
+  async getTotalExpenseByClassification(
+    userId: UUID,
+  ): Promise<ResClassificationExpenseDto[]> {
+    try {
+      const expenses = await this.expenseRepository
+        .createQueryBuilder('expense')
+        .select('expense.classification_id', 'classificationId')
+        .addSelect('SUM(expense.amount)', 'total')
+        .where('expense.user_id = :userId', { userId })
+        .andWhere('expense.exception = false')
+        .groupBy('expense.classification_id')
+        .getRawMany()
+
+      console.log(expenses)
+      return expenses
+    } catch (error) {
+      console.error(
+        'Error while getting total expense by classification:',
+        error,
+      )
+      throw error
+    }
   }
 }

@@ -9,6 +9,7 @@ import {
   ReqDetailExpenseDto,
   ReqExpenseDto,
   ReqMonthlyDto,
+  ResClassificationExpenseDto,
   ResDetailExpenseDto,
   ResGetExpenseDto,
 } from '@expense/domain/dto/expense.app.dto'
@@ -91,16 +92,12 @@ export class ExpenseService implements IExpenseService {
 
       const totalWeeklyExpenseResult =
         await this.expenseRepository.getWeeklyExpense(req.userId, yearMonth)
-      //   console.log(totalWeeklyExpenseResult)
-      // 결과를 저장할 객체를 초기화합니다.
-      //   console.log(totalWeeklyExpenseResult[0], 1)
+
       let result = {}
-      //   console.log('result initialized', result)
       // 월간 총 지출을 객체에 추가합니다.
       result[`${month}월 총 지출`] = Number(totalMonthlyExpenseResult['total'])
-      //   console.log('result after adding total expense', result)
 
-      //   //   주간 지출을 객체에 추가합니다.
+      //주간 지출을 객체에 추가합니다.
       Object.entries(totalWeeklyExpenseResult).forEach(([key, item], index) => {
         console.log(`item for week ${index + 1}:`, item)
         result[`${month}월 ${index + 1}주`] = Number(item['totalExpense'])
@@ -137,12 +134,38 @@ export class ExpenseService implements IExpenseService {
 
   async getExpense(id: number, userId: UUID): Promise<ResDetailExpenseDto> {
     try {
-      console.log(id)
       const result = await this.expenseRepository.getExpense(userId, id)
       return result
     } catch (error) {
       throw new InternalServerErrorException(
         '상세지출 내역 가져오기에 실패했습니다.',
+      )
+    }
+  }
+
+  async getTotalExpenseByClassification(
+    userId: UUID,
+  ): Promise<ResClassificationExpenseDto[]> {
+    try {
+      const expenses =
+        await this.expenseRepository.getTotalExpenseByClassification(userId)
+
+      // Initialize an object with classificationId 1-18 and total as 0
+      let result: { [key: number]: ResClassificationExpenseDto } = {}
+      for (let i = 1; i <= 18; i++) {
+        result[i] = { classificationId: i, total: '0' }
+      }
+
+      // Map the query result to the result object
+      for (let expense of expenses) {
+        result[expense.classificationId] = expense
+      }
+
+      // Convert the result object to an array
+      return Object.values(result)
+    } catch (error) {
+      throw new InternalServerErrorException(
+        '카테고리지출 내역 가져오기에 실패했습니다.',
       )
     }
   }
