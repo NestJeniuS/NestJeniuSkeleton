@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Expense } from '@expense/domain/expense.entity'
+import { Expense } from '@expense/infra/db/expense.entity'
 import { IExpenseRepository } from '@expense/domain/interface/expense.repository.interface'
 import { plainToClass, plainToInstance } from 'class-transformer'
 import { Repository, DeepPartial, QueryFailedError } from 'typeorm'
@@ -142,18 +142,24 @@ export class ExpenseRepository implements IExpenseRepository {
 
   async getTotalExpenseByClassification(
     userId: UUID,
+    month: Date,
   ): Promise<ResClassificationExpenseDto[]> {
     try {
+      const monthStr = month.toISOString().split('T')[0]
       const expenses = await this.expenseRepository
         .createQueryBuilder('expense')
         .select('expense.classification_id', 'classificationId')
         .addSelect('SUM(expense.amount)', 'total')
         .where('expense.user_id = :userId', { userId })
         .andWhere('expense.exception = false')
+        .andWhere(
+          `DATE_TRUNC('month', expense.date) = DATE_TRUNC('month', TO_DATE(:monthStr, 'YYYY-MM-DD'))`,
+          { monthStr },
+        )
         .groupBy('expense.classification_id')
         .getRawMany()
 
-      console.log(expenses)
+      // console.log(expenses)
       return expenses
     } catch (error) {
       console.error(

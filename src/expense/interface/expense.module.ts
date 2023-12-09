@@ -5,10 +5,11 @@ import { ConfigService } from '@nestjs/config'
 import { jwtConfig } from '@common/configs/jwt.config'
 import { UserModule } from '@user/interface/user.module'
 import { ExpenseProvider } from './expense.provider'
-import { Expense } from '@expense/domain/expense.entity'
+import { Expense } from '@expense/infra/db/expense.entity'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { BudgetProvider } from '@budget/interface/budget.provider'
 import { BudgetModule } from '@budget/interface/budget.module'
+import { ScheduleModule } from '@nestjs/schedule'
+import { HttpModule } from '@nestjs/axios'
 
 @Module({
   controllers: [ExpenseController],
@@ -27,6 +28,8 @@ import { BudgetModule } from '@budget/interface/budget.module'
       }),
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
+    HttpModule,
   ],
 })
 export class ExpenseModule {}

@@ -17,7 +17,10 @@ import {
   ParseIntPipe,
 } from '@nestjs/common'
 import { IExpenseService } from '@expense/domain/interface/expense.service.interface'
-import { IEXPENSE_SERVICE } from '@common/constants/provider.constant'
+import {
+  IEXPENSE_SERVICE,
+  IRECOMMENDATION_SERVICE,
+} from '@common/constants/provider.constant'
 import {
   ReqClassificationExpenseDto,
   ReqDetailExpenseDto,
@@ -30,6 +33,8 @@ import {
 import { JwtAuthGuard } from '@auth/infra/passport/guards/jwt.guard'
 import { Request } from 'express'
 import { config } from 'rxjs'
+import { IRecommendationService } from '@expense/app/recommendation.service.interface'
+import { ApiOperation } from '@nestjs/swagger'
 
 @UseGuards(JwtAuthGuard)
 @Controller('expenses')
@@ -37,6 +42,8 @@ export class ExpenseController {
   constructor(
     @Inject(IEXPENSE_SERVICE)
     private readonly expenseService: IExpenseService,
+    @Inject(IRECOMMENDATION_SERVICE)
+    private readonly recommendationService: IRecommendationService,
   ) {}
 
   @Post()
@@ -52,6 +59,27 @@ export class ExpenseController {
       ...expense,
     })
     return expenses
+  }
+
+  @ApiOperation({ summary: '오늘 지출 추천 API' })
+  @UsePipes(ValidationPipe)
+  @HttpCode(HttpStatus.OK)
+  @Get('recommendExpenditure')
+  async getRecommendExpenditure(
+    @Req() req: Request,
+    @Query() month: ReqMonthlyDto,
+  ) {
+    const userId = req.user.id
+    await this.recommendationService.recommendExpenditure({ userId, ...month })
+  }
+
+  @ApiOperation({ summary: '오늘 지출량 안내 API' })
+  @UsePipes(ValidationPipe)
+  @HttpCode(HttpStatus.OK)
+  @Get('todayUsage')
+  async getTodayUsage(@Req() req: Request) {
+    const userId = req.user.id
+    await this.recommendationService.todayUsage()
   }
 
   @Get()
@@ -74,10 +102,14 @@ export class ExpenseController {
   @HttpCode(HttpStatus.OK)
   async getTotalExpenseByClassification(
     @Req() req: Request,
+    @Query() month: ReqMonthlyDto,
   ): Promise<ResClassificationExpenseDto[]> {
     const userId = req.user.id
     const getTotalExpenseByClassification =
-      await this.expenseService.getTotalExpenseByClassification(userId)
+      await this.expenseService.getTotalExpenseByClassification({
+        userId,
+        ...month,
+      })
     return getTotalExpenseByClassification
   }
 

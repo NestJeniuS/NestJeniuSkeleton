@@ -5,6 +5,7 @@ import {
   IsInteger,
 } from '@common/decorators/budget.decorator'
 import { Transform } from 'class-transformer'
+import { Classification } from '@classification/domain/classification.entity'
 
 export class ReqBudgetDto {
   readonly userId: UUID
@@ -29,4 +30,12 @@ export class ReqRecommendBudgetDto {
   @IsNumber()
   @Transform(({ value }) => parseInt(value))
   readonly total: number
+}
+export class ResGetMonthlyBudgetDto {
+  id: number
+  amount: number
+  month: Date
+  created_at: Date
+  updated_at: Date
+  classification: Classification
 }

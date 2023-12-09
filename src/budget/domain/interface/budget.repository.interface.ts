@@ -1,5 +1,6 @@
 import { Budget } from '../budget.entity'
 import { UUID } from 'crypto'
+import { ResGetMonthlyBudgetDto } from '../dto/budget.app.dto'
 
 export interface IBudgetRepository {
   createBudget(
@@ -14,11 +15,15 @@ export interface IBudgetRepository {
     classificationId: number,
     month: Date,
   ): Promise<object>
+  findMonthlyBudget(
+    userId: UUID,
+    month: Date,
+  ): Promise<ResGetMonthlyBudgetDto[]>
   updateBudget(
     userId: UUID,
     month: Date,
     classification: number,
     amount: number,
   ): Promise<void>
-  getMonthlyBudgetRatio(month: Date): Promise<object>
+  getMonthlyBudgetRatio(month: Date, userId: UUID): Promise<object>
 }

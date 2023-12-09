@@ -3,7 +3,7 @@ import {
   ResClassificationExpenseDto,
   ResDetailExpenseDto,
 } from '../dto/expense.app.dto'
-import { Expense } from '../expense.entity'
+import { Expense } from '../../infra/db/expense.entity'
 import { UUID } from 'crypto'
 import { OAuthFlowObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface'
 
@@ -23,5 +23,6 @@ export interface IExpenseRepository {
   getExpense(userId: UUID, expenseId: number): Promise<ResDetailExpenseDto>
   getTotalExpenseByClassification(
     userId: UUID,
+    month: Date,
   ): Promise<ResClassificationExpenseDto[]>
 }

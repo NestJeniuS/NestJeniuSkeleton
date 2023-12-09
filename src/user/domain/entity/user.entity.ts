@@ -10,7 +10,7 @@ import {
 } from 'typeorm'
 import { Exclude, Expose, Transform, Type } from 'class-transformer'
 import { UUID } from 'crypto'
-import { Expense } from '@expense/domain/expense.entity'
+import { Expense } from '@expense/infra/db/expense.entity'
 
 @Entity()
 export class User extends BaseEntity {

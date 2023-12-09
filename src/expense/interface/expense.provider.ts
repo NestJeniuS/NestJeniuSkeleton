@@ -1,12 +1,12 @@
 import { ExpenseService } from '@expense/app/expense.service'
-import { ExpenseRepository } from '@expense/infra/expenses.repository'
+import { ExpenseRepository } from '@expense/infra/db/expenses.repository'
 import { UserRepository } from '@user/infra/userRepository'
 import {
   IEXPENSE_REPOSITORY,
   IEXPENSE_SERVICE,
-  IBUDGET_REPOSITORY,
+  IRECOMMENDATION_SERVICE,
 } from '@common/constants/provider.constant'
-import { BudgetRepository } from '@budget/infra/budgetRepository'
+import { RecommendationService } from '@expense/infra/adapter/recommendation.service'
 
 export const ExpenseProvider = [
   {
@@ -17,8 +17,8 @@ export const ExpenseProvider = [
     provide: IEXPENSE_REPOSITORY,
     useClass: ExpenseRepository,
   },
-  // {
-  //   provide: IBUDGET_REPOSITORY,
-  //   useClass: BudgetRepository,
-  // },
+  {
+    provide: IRECOMMENDATION_SERVICE,
+    useClass: RecommendationService,
+  },
 ]

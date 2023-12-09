@@ -97,8 +97,10 @@ export class BudgetService implements IBudgetService {
   async recommendBudget(req: ReqRecommendBudgetDto): Promise<object> {
     try {
       const yearMonth = new Date(req.month)
-      const findBudgetRatio =
-        await this.budgetRepository.getMonthlyBudgetRatio(yearMonth)
+      const findBudgetRatio = await this.budgetRepository.getMonthlyBudgetRatio(
+        yearMonth,
+        req.userId,
+      )
 
       const totalBudget = Number(req.total)
 

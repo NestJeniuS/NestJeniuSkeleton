@@ -4,6 +4,7 @@ export const ICACHE_SERVICE = 'ICacheService'
 export const IUSER_SERVICE = 'IUserService'
 export const IBUDGET_SERVICE = 'IBudgetService'
 export const IEXPENSE_SERVICE = 'IExpenseService'
+export const IRECOMMENDATION_SERVICE = 'IRecommendationService'
 
 export const IUSER_REPOSITORY = 'IUserRepository'
 export const IBUDGET_REPOSITORY = 'IBudgetRepository'

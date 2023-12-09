@@ -1,4 +1,4 @@
-import { Expense } from '@expense/domain/expense.entity'
+import { Expense } from '@expense/infra/db/expense.entity'
 import {
   BaseEntity,
   Column,

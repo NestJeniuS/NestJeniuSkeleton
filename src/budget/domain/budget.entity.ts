@@ -12,7 +12,7 @@ import {
 import { User } from 'src/user/domain/entity/user.entity'
 import { Classification } from 'src/classification/domain/classification.entity'
 import { UUID } from 'crypto'
-import { Expense } from '@expense/domain/expense.entity'
+import { Expense } from '@expense/infra/db/expense.entity'
 
 @Entity()
 export class Budget extends BaseEntity {

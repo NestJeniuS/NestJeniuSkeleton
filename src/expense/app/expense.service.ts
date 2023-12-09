@@ -144,24 +144,27 @@ export class ExpenseService implements IExpenseService {
   }
 
   async getTotalExpenseByClassification(
-    userId: UUID,
+    req: ReqMonthlyDto,
   ): Promise<ResClassificationExpenseDto[]> {
     try {
+      const month = new Date(req.month)
       const expenses =
-        await this.expenseRepository.getTotalExpenseByClassification(userId)
+        await this.expenseRepository.getTotalExpenseByClassification(
+          req.userId,
+          month,
+        )
 
-      // Initialize an object with classificationId 1-18 and total as 0
+      //키를 가지는 객체로 초기화 후 result에 매핑하여 즉시 expense에 할당
       let result: { [key: number]: ResClassificationExpenseDto } = {}
       for (let i = 1; i <= 18; i++) {
         result[i] = { classificationId: i, total: '0' }
       }
 
-      // Map the query result to the result object
       for (let expense of expenses) {
         result[expense.classificationId] = expense
       }
 
-      // Convert the result object to an array
+      // result객체를 배열로 변환
       return Object.values(result)
     } catch (error) {
       throw new InternalServerErrorException(

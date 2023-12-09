@@ -5,6 +5,7 @@ import { plainToClass } from 'class-transformer'
 import { Repository, DeepPartial } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { UUID } from 'crypto'
+import { ResGetMonthlyBudgetDto } from '@budget/domain/dto/budget.app.dto'
 
 @Injectable()
 export class BudgetRepository implements IBudgetRepository {
@@ -54,6 +55,17 @@ export class BudgetRepository implements IBudgetRepository {
     return budget
   }
 
+  async findMonthlyBudget(
+    userId: UUID,
+    month: Date,
+  ): Promise<ResGetMonthlyBudgetDto[]> {
+    const budget = await this.budgetRepository.find({
+      where: { user: { id: userId }, month: month },
+      relations: ['classification'],
+    })
+    return budget
+  }
+
   async updateBudget(
     userId: UUID,
     month: Date,
@@ -77,7 +89,7 @@ export class BudgetRepository implements IBudgetRepository {
       throw new Error(`Failed : ${error.message}`)
     }
   }
-  async getMonthlyBudgetRatio(month: Date): Promise<object> {
+  async getMonthlyBudgetRatio(month: Date, userId: UUID): Promise<object> {
     try {
       const query = this.budgetRepository
         .createQueryBuilder('budget')
@@ -87,7 +99,10 @@ export class BudgetRepository implements IBudgetRepository {
           'ROUND((CAST(SUM(budget.amount) AS NUMERIC) / (SELECT CAST(SUM(amount) AS NUMERIC) FROM budget WHERE month = :month)) * 100, 2)',
           'budgetRatio',
         )
-        .where('budget.month = :month', { month }) // month 기준으로 필터링
+        .where('budget.month = :month AND budget.user_id = :userId', {
+          month,
+          userId,
+        }) // month와 userId 기준으로 필터링
         .groupBy('budget.classification_id')
 
       const categories = await query.getRawMany()
