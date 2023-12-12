@@ -19,6 +19,7 @@ export interface IBudgetRepository {
     userId: UUID,
     month: Date,
   ): Promise<ResGetMonthlyBudgetDto[]>
+  // findTotalBudget(userId: UUID, month: Date)
   updateBudget(
     userId: UUID,
     month: Date,

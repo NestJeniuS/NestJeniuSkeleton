@@ -70,7 +70,11 @@ export class ExpenseController {
     @Query() month: ReqMonthlyDto,
   ) {
     const userId = req.user.id
-    await this.recommendationService.recommendExpenditure({ userId, ...month })
+    const result = await this.recommendationService.recommendExpenditure({
+      userId,
+      ...month,
+    })
+    return result
   }
 
   @ApiOperation({ summary: '오늘 지출량 안내 API' })
