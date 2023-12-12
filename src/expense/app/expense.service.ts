@@ -16,11 +16,13 @@ import {
 import {
   IBUDGET_REPOSITORY,
   IEXPENSE_REPOSITORY,
+  IHANDLE_DATE_TIME,
 } from '@common/constants/provider.constant'
 import { IExpenseService } from '@expense/domain/interface/expense.service.interface'
 import { IExpenseRepository } from '@expense/domain/interface/expense.repository.interface'
 import { IBudgetRepository } from '@budget/domain/interface/budget.repository.interface'
 import { UUID } from 'crypto'
+import { IHandleDateTime } from '@common/interfaces/IHandleDateTime'
 
 @Injectable()
 export class ExpenseService implements IExpenseService {
@@ -29,6 +31,8 @@ export class ExpenseService implements IExpenseService {
     private readonly expenseRepository: IExpenseRepository,
     @Inject(IBUDGET_REPOSITORY)
     private readonly budgetRepository: IBudgetRepository,
+    @Inject(IHANDLE_DATE_TIME)
+    private readonly handleDateTime: IHandleDateTime,
   ) {}
 
   async createExpense(req: ReqExpenseDto): Promise<string> {
@@ -40,17 +44,19 @@ export class ExpenseService implements IExpenseService {
       exception,
       date: reqDate,
     } = req
-    const date = new Date(reqDate)
-    const year = date.getFullYear()
-    const month = date.getMonth()
-
-    const monthDate = new Date(year, month)
-
     try {
+      const date = new Date(reqDate)
+      const year = this.handleDateTime.getYear(date)
+      const month = this.handleDateTime.getMonth(date)
+
+      const monthDate = this.handleDateTime.getMonthDate(year, month)
+      const monthDateZoned =
+        this.handleDateTime.convertZonedDateTimeToDate(monthDate)
+
       const budget = await this.budgetRepository.findBudgetByDate(
         userId,
         classificationId,
-        monthDate,
+        monthDateZoned,
       )
 
       if (!budget || Object.keys(budget).length === 0) {
@@ -80,9 +86,12 @@ export class ExpenseService implements IExpenseService {
   }
   async getMonthlyExpense(req: ReqMonthlyDto): Promise<object> {
     try {
-      const yearMonth = new Date(req.month) // month는 문자열
+      const yearMonthZoned = this.handleDateTime.getYearMonth(req.month)
+      const yearMonth =
+        this.handleDateTime.convertZonedDateTimeToDate(yearMonthZoned)
+
       const month = yearMonth.getMonth() + 1 // JavaScript에서 월은 0부터 시작하므로 1을 더해주어야 합니다.
-      //   console.log(month)
+
       const totalMonthlyExpenseResult =
         await this.expenseRepository.getTotalMonthlyExpense(
           req.userId,
@@ -172,20 +181,4 @@ export class ExpenseService implements IExpenseService {
       )
     }
   }
-
-  //   async updateExpense(req: ReqExpenseDto): Promise<string> {
-  //     try {
-  //         const {
-  //             classificationId,
-  //             userId,
-  //             amount,
-  //             memo,
-  //             exception,
-  //             date: reqDate,
-  //           } = req
-  //           const date = new Date(reqDate)
-
-  //     }
-
-  //   }
 }

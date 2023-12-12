@@ -9,6 +9,7 @@ import {
   IBUDGET_REPOSITORY,
   IEXPENSE_REPOSITORY,
   IEXPENSE_SERVICE,
+  IHANDLE_DATE_TIME,
   IRECOMMENDATION_SERVICE,
 } from '@common/constants/provider.constant'
 import { IExpenseRepository } from '@expense/domain/interface/expense.repository.interface'
@@ -20,6 +21,8 @@ import { IExpenseService } from '@expense/domain/interface/expense.service.inter
 import { Cron, CronExpression } from '@nestjs/schedule'
 import { HttpService } from '@nestjs/axios'
 import { payloads } from './webhook.payloads'
+import { IHandleDateTime } from '@common/interfaces/IHandleDateTime'
+import { ZonedDateTime, convert } from '@js-joda/core'
 
 @Injectable()
 export class RecommendationService implements IRecommendationService {
@@ -31,6 +34,8 @@ export class RecommendationService implements IRecommendationService {
     private readonly expenseRepository: IExpenseRepository,
     @Inject(IBUDGET_REPOSITORY)
     private readonly budgetRepository: IBudgetRepository,
+    @Inject(IHANDLE_DATE_TIME)
+    private readonly handleDateTime: IHandleDateTime,
   ) {}
   amountForm = (amount: number): string => {
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -39,31 +44,30 @@ export class RecommendationService implements IRecommendationService {
   @Cron(CronExpression.EVERY_DAY_AT_6AM, { name: 'recommendExpenditureTask' })
   async recommendExpenditure(req: ReqMonthlyDto): Promise<object> {
     try {
-      const today = new Date()
-      const firstDayOfMonth = new Date(req.month)
-      //   console.log(firstDayOfMonth)
-      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
-      endOfMonth.setHours(23, 59, 59, 999) // Set the time to the end of the day
-      const remainingDays =
-        (endOfMonth.getTime() - today.getTime()) / (1000 * 60 * 60 * 24) // Calculate the difference in days
-      const remainingDaysRounded = Math.ceil(remainingDays) // Round up to the nearest whole number
+      const today = this.handleDateTime.getToday()
+
+      const firstDayOfMonthZoned = this.handleDateTime.getYearMonth(req.month)
+
+      const firstDayOfMonth =
+        this.handleDateTime.convertZonedDateTimeToDate(firstDayOfMonthZoned)
+
+      const endOfMonth = this.handleDateTime.getEndOfMonth(new Date(today))
+
+      const remainingDays = this.handleDateTime.getRemainingDays(
+        new Date(today),
+        endOfMonth,
+      )
 
       const budget = await this.budgetRepository.findMonthlyBudget(
         req.userId,
         firstDayOfMonth,
       )
-      // const totalBudget = await this.budgetRepository.findMonthlyTotalBudget(
-      //   req.userId,
-      //   firstDayOfMonth,
-      // )
+
       const webUrl = process.env.DISCORD_WEBHOOK_URL
 
       const expense = await this.expenseService.getTotalExpenseByClassification(
         { userId: req.userId, month: req.month },
       )
-      // console.log(expense)
-      //   console.log(remainingDaysRounded)
-      // console.log(budget)
 
       // Budget과 Expense를 classificationId를 기준으로 하나의 객체에 합칩니다.
       const budgetExpenseMap = new Map()
@@ -90,7 +94,7 @@ export class RecommendationService implements IRecommendationService {
         const remainingBudget = budget - expense
         let dailyBudget
         if (remainingBudget > 0) {
-          dailyBudget = Math.round(remainingBudget / remainingDaysRounded)
+          dailyBudget = Math.round(remainingBudget / remainingDays)
         } else {
           dailyBudget = 0 // 예산 초과 시 일일 권장 지출액을 0으로 설정
         }
@@ -115,16 +119,13 @@ export class RecommendationService implements IRecommendationService {
         )}₩
         `
       }
-      // console.log(payload)
 
       const message = payloads.MORNING_CONSULTING(payload)
-
-      // console.log(dailyRecommendedExpenditure)
 
       this.sendDiscord(webUrl, message)
       return dailyRecommendedExpenditure
     } catch (error) {
-      throw new Error('Method not implemented.')
+      throw new ConflictException('오늘의 지출 추천 불러오기에 실패 했습니다.')
     }
   }
 

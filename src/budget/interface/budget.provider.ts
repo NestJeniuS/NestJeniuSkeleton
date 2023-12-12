@@ -4,8 +4,10 @@ import { UserRepository } from '@user/infra/userRepository'
 import {
   IBUDGET_REPOSITORY,
   IBUDGET_SERVICE,
+  IHANDLE_DATE_TIME,
   IUSER_REPOSITORY,
 } from '@common/constants/provider.constant'
+import { HandleDateTime } from '@common/utils/handleDateTime'
 
 export const BudgetProvider = [
   {
@@ -16,8 +18,8 @@ export const BudgetProvider = [
     provide: IBUDGET_REPOSITORY,
     useClass: BudgetRepository,
   },
-  // {
-  //   provide: IUSER_REPOSITORY,
-  //   useClass: UserRepository,
-  // },
+  {
+    provide: IHANDLE_DATE_TIME,
+    useClass: HandleDateTime,
+  },
 ]

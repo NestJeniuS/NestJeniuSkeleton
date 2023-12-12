@@ -10,7 +10,10 @@ import {
   ReqRecommendBudgetDto,
 } from '@budget/domain/dto/budget.app.dto'
 import { IBudgetService } from '@budget/domain/interface/budget.service.interface'
-import { IBUDGET_REPOSITORY } from '@common/constants/provider.constant'
+import {
+  IBUDGET_REPOSITORY,
+  IHANDLE_DATE_TIME,
+} from '@common/constants/provider.constant'
 import { IBudgetRepository } from '@budget/domain/interface/budget.repository.interface'
 import {
   calculateBudget,
@@ -20,12 +23,15 @@ import {
   BUDGET_ALREADY_EXIST,
   BUDGET_NOTFOUND,
 } from '@common/messages/budget/budget.error'
+import { IHandleDateTime } from '@common/interfaces/IHandleDateTime'
 
 @Injectable()
 export class BudgetService implements IBudgetService {
   constructor(
     @Inject(IBUDGET_REPOSITORY)
     private readonly budgetRepository: IBudgetRepository,
+    @Inject(IHANDLE_DATE_TIME)
+    private readonly handleDateTime: IHandleDateTime,
   ) {}
 
   async createBudget(req: ReqBudgetDto): Promise<string> {
