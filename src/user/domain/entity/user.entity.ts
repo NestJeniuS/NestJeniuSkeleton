@@ -6,9 +6,11 @@ import {
   Unique,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm'
 import { Exclude, Expose, Transform, Type } from 'class-transformer'
 import { UUID } from 'crypto'
+import { Expense } from '@expense/infra/db/expense.entity'
 
 @Entity()
 export class User extends BaseEntity {
@@ -35,4 +37,7 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   @Expose()
   updatedAt: Date
+
+  @OneToMany(() => Expense, (expense) => expense.user)
+  expenses: Expense[]
 }

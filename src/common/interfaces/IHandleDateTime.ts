@@ -1,3 +1,5 @@
+import { ZonedDateTime } from '@js-joda/core'
+
 export interface IHandleDateTime {
   getToday: () => string
 
@@ -16,4 +18,18 @@ export interface IHandleDateTime {
   getDateString: (date: Date) => string
 
   getADayAgoFromDate: (date: Date) => string
+
+  getYear: (date: Date) => number
+
+  getMonth: (date: Date) => number
+
+  getMonthDate: (year: number, month: number) => ZonedDateTime
+
+  getEndOfMonth: (date: Date) => Date
+
+  getRemainingDays: (today: Date, endOfMonth: Date) => number
+
+  getYearMonth: (monthString: string) => ZonedDateTime
+
+  convertZonedDateTimeToDate: (zonedDateTime: ZonedDateTime) => Date
 }

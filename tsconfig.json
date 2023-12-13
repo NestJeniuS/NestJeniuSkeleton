@@ -24,7 +24,7 @@
       "@auth/*": ["src/auth/*"],
       "@redis/*": ["src/redis/*"],
       "@cache/*": ["src/cache/*"],
-      "@expenses/*": ["src/expenses/*"],
+      "@expense/*": ["src/expense/*"],
       "@classification/*": ["src/classification/*"],
       "@budget/*": ["src/budget/*"]
     }

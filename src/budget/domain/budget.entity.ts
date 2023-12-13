@@ -7,10 +7,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
+  OneToMany,
 } from 'typeorm'
 import { User } from 'src/user/domain/entity/user.entity'
 import { Classification } from 'src/classification/domain/classification.entity'
 import { UUID } from 'crypto'
+import { Expense } from '@expense/infra/db/expense.entity'
 
 @Entity()
 export class Budget extends BaseEntity {
@@ -24,6 +26,9 @@ export class Budget extends BaseEntity {
   @ManyToOne(() => Classification, (classification) => classification.id)
   @JoinColumn({ name: 'classification_id' }) // JoinColumn 추가
   classification: Classification
+
+  @OneToMany(() => Expense, (expense) => expense.budget)
+  expenses: Expense[]
 
   @Column({ type: 'int', nullable: true })
   amount: number
