@@ -3,5 +3,5 @@ import { UUID } from 'crypto'
 
 export interface IRecommendationService {
   recommendExpenditure(req: ReqMonthlyDto): Promise<object>
-  todayUsage(): Promise<object>
+  todayUsage(req: ReqMonthlyDto): Promise<object>
 }

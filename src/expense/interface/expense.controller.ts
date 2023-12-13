@@ -81,9 +81,13 @@ export class ExpenseController {
   @UsePipes(ValidationPipe)
   @HttpCode(HttpStatus.OK)
   @Get('todayUsage')
-  async getTodayUsage(@Req() req: Request) {
+  async getTodayUsage(@Req() req: Request, @Query() month: ReqMonthlyDto) {
     const userId = req.user.id
-    await this.recommendationService.todayUsage()
+    const result = await this.recommendationService.todayUsage({
+      userId,
+      ...month,
+    })
+    return result
   }
 
   @Get()
