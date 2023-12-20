@@ -18,6 +18,7 @@ import {
   ICACHE_SERVICE,
   IPASSWORD_HASHER,
   IUSER_REPOSITORY,
+  IUSER_SERVICE,
 } from '@common/constants/provider.constant'
 import { IUserService } from '@user/domain/interface/user.service.interface'
 import { IPasswordHasher } from '@common/interfaces/IPasswordHasher'
@@ -35,20 +36,16 @@ export class UserService implements IUserService {
     private readonly cacheService: ICacheService,
     @Inject(IPASSWORD_HASHER)
     private readonly passwordHasher: IPasswordHasher,
-    private readonly configService: ConfigService,
   ) {}
 
   async register(newUser: ReqRegisterAppDto): Promise<void> {
     const { email, password } = newUser
-    console.log(newUser)
 
-    console.log(email)
     const existingUser = await this.userRepository.findByEmail(email)
 
     if (existingUser) {
       throw new ConflictException(USER_ALREADY_EXIST)
     }
-    console.log(4)
 
     const hashedPassword = await this.passwordHasher.hashPassword(password)
 

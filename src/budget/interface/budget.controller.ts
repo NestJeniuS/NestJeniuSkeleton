@@ -25,8 +25,8 @@ import { plainToClass } from 'class-transformer'
 import { Request } from 'express'
 import { config } from 'rxjs'
 
-@UseGuards(JwtAuthGuard)
 @Controller('budgets')
+@UseGuards(JwtAuthGuard)
 export class BudgetController {
   constructor(
     @Inject(IBUDGET_SERVICE)

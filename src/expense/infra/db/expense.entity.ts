@@ -7,9 +7,9 @@ import {
   UpdateDateColumn,
   ManyToOne,
 } from 'typeorm'
-import { Classification } from 'src/classification/domain/classification.entity'
-import { Budget } from 'src/budget/domain/budget.entity'
-import { User } from 'src/user/domain/entity/user.entity'
+import { Classification } from '@classification/domain/classification.entity'
+import { Budget } from '@budget/domain/budget.entity'
+import { User } from '@user/domain/entity/user.entity'
 
 @Entity()
 export class Expense extends BaseEntity {
