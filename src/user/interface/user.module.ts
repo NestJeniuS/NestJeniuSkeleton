@@ -6,12 +6,9 @@ import { jwtConfig } from '@common/configs/jwt.config'
 import { UserProvider } from './user.provider'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from '@user/domain/entity/user.entity'
-// import { TypeOrmExModule } from '@common/decorator/typeorm-ex.module'
-import { UserRepository } from '@user/infra/userRepository'
 
 @Module({
   imports: [
-    // TypeOrmExModule.forCustomRepository([UserRepository]),
     TypeOrmModule.forFeature([User]),
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({

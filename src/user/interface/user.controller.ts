@@ -1,12 +1,10 @@
 import {
-  Controller,
-  Get,
+  HttpCode,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
   Inject,
+  HttpStatus,
+  Controller,
 } from '@nestjs/common'
 import { ReqRegisterDto } from './dto/registerUserDto'
 import { IUSER_SERVICE } from '@common/constants/provider.constant'
@@ -20,27 +18,8 @@ export class UserController {
   ) {}
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async register(@Body() user: ReqRegisterDto): Promise<void> {
     await this.userService.register(user)
   }
-
-  // @Get()
-  // findAll() {
-  //   return this.userService.findAll()
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.userService.findOne(+id)
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.userService.update(+id, updateUserDto)
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.userService.remove(+id)
-  // }
 }

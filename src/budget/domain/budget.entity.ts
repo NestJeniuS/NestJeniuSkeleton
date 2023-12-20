@@ -9,8 +9,8 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm'
-import { User } from 'src/user/domain/entity/user.entity'
-import { Classification } from 'src/classification/domain/classification.entity'
+import { User } from '@user/domain/entity/user.entity'
+import { Classification } from '@classification/domain/classification.entity'
 import { UUID } from 'crypto'
 import { Expense } from '@expense/infra/db/expense.entity'
 

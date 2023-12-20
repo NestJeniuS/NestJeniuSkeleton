@@ -18,7 +18,6 @@ export class UserRepository implements IUserRepository {
 
   // 유저 생성
   async createUser(email: string, password: string): Promise<User> {
-    // console.log(3)
     const newUser = await this.userRepository.save({ email, password })
     return plainToClass(User, newUser)
   }
