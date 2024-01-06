@@ -4,6 +4,9 @@ WORKDIR /app
 COPY package.json ./
 COPY package-lock.json ./
 
+RUN npm config set fetch-retries 10
+RUN npm config set fetch-retry-mintimeout 60000
+
 RUN npm install -g pm2 
 RUN npm install 
 
