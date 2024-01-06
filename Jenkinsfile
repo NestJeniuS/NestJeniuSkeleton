@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                     echo 'Docker Rm Start, docker 컨테이너가 현재 돌아갈시 실행해야함'
-                    def containerId = sh(script: 'docker ps -q -f "name=docker-jenkins-pipeline-test"', returnStatus: true).trim()
+                    def containerId = sh(script: 'docker ps -q -f "name=docker-jenkins-pipeline-test"', returnStdout: true).trim()
                     if (containerId) {
                         sh "docker stop $containerId"
                         sh "docker rm $containerId"
