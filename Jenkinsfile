@@ -25,13 +25,28 @@ pipeline {
         }
         stage('Docker Clear') {
             steps {
-                sh 'echo "Docker Rm Start, docker 컨테이너가 현재 돌아갈시 실행해야함"'
-                sh """
-                docker stop docker-jenkins-pipeline-test
-                docker rm docker-jenkins-pipeline-test
-                docker rmi -f wjdwogns120523/docker-jenkins-pipeline-test
-                """
+        script {
+            echo "Docker Rm Start, docker 컨테이너가 현재 돌아갈시 실행해야함"
+            def containerId = sh(script: 'docker ps -q -f "name=docker-jenkins-pipeline-test"', returnStatus: true).trim()
+            if (containerId) {
+                sh "docker stop $containerId"
+                sh "docker rm $containerId"
+                sh "docker rmi -f wjdwogns120523/docker-jenkins-pipeline-test"
+            } else {
+                echo "No such container: docker-jenkins-pipeline-test"
             }
+        }
+    }
+
+    post {
+        success {
+            echo "Docker Clear Success"
+        }
+        failure {
+            echo "Docker Clear Fail"
+        }
+    }
+}
             
             post {
                 success { 
@@ -75,4 +90,4 @@ pipeline {
             }
         }
     }
-}
+
