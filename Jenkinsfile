@@ -79,7 +79,7 @@ pipeline {
         
         stage('Deploy') {
             steps {
-                sh 'docker run --name docker-jenkins-pipeline-test -d -p 8083:8083 wjdwogns120523/docker-jenkins-pipeline-test'
+                sh 'docker run --name docker-jenkins-pipeline-test -d -p 8083:5002 wjdwogns120523/docker-jenkins-pipeline-test'
             }
 
             post {
