@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:18.16.0'
+        }
+    }
     
     stages {
         stage('Checkout') {
@@ -21,6 +25,13 @@ pipeline {
         stage('Test') { 
             steps {
                 echo '테스트 단계와 관련된 몇 가지 단계를 수행합니다.'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh 'npm install'
+                sh 'npm run build'
             }
         }
         
