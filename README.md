@@ -56,7 +56,7 @@
   2. JWT 토큰은 `Access token`과 `Refresh token` 두개가 발급됩니다.
   - 이 떄 Refresh token은 `redis store`에 저장됩니다.
   3. 이후 게시물, 통계 API 요청 Header에 Access token가 항시 포함되며, JWT 유효성을 검증합니다.
-  4. Aaccess token 만료시 Refresh token을 포함하여 재발급 요청시 Refresh 유효성 검증 후 Access토큰을 재발급합니다,
+  4. Aaccess token 만료시 Refresh token을 포함하여 재발급 요청시 Refresh 유효성 검증 후 Access토큰을 재발급합니다.
 
 ### 예산 설정
 
