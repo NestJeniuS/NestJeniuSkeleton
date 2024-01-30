@@ -1,4 +1,4 @@
- <img src="./public/logo.png" alt="logo" width="80%" />
+ <img src="./public/logo.png" alt="logo" width="60%" />
 
 # 지출 관리 서비스
 
