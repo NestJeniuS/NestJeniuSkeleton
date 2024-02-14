@@ -19,6 +19,5 @@ export interface RefreshInfo {
 export interface DeviceInfo {
   readonly browser: string
   readonly platform: string
-  readonly os: string
   readonly version: string
 }

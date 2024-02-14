@@ -89,7 +89,9 @@ export class AuthService implements IAuthService {
   async login(req: ReqLoginAppDto): Promise<ResLoginAppDto> {
     const accessToken = this.tokenService.generateAccessToken(req)
     const refreshToken = this.tokenService.generateRefreshToken(req)
+
     const { ip, device } = req
+
     await this.cacheService.setCache(
       `refreshToken:${req.id}`,
       { refreshToken, ip, device },
@@ -113,7 +115,6 @@ export class AuthService implements IAuthService {
   }
 
   async logout(req: ReqLogoutAppDto): Promise<void> {
-    // await this.redisService.delete(`refresh_token:${req.id}`);
     await this.cacheService.deleteCache(`user:${req.id}`)
     this.logger.log('info', `${LOGOUT_SUCCESS_MESSAGE}-유저 ID:${req.id}`)
   }
@@ -121,7 +122,7 @@ export class AuthService implements IAuthService {
   async refresh(req: ReqRefreshAppDto): Promise<ResRefreshAppDto> {
     const decoded = this.tokenService.decodeToken(req.refreshToken)
 
-    if (!decoded || !decoded.id) {
+    if (!decoded) {
       throw new UnauthorizedException(AUTH_INVALID_TOKEN)
     }
     const redisRefreshInfo: RefreshInfo = await this.cacheService.getFromCache(
@@ -145,7 +146,6 @@ export class AuthService implements IAuthService {
 
     if (
       reqDevice.browser !== redisDevice.browser ||
-      reqDevice.os !== redisDevice.os ||
       reqDevice.platform !== redisDevice.platform ||
       reqDevice.version !== redisDevice.version
     ) {
@@ -153,7 +153,7 @@ export class AuthService implements IAuthService {
       throw new UnauthorizedException(OTHER_DEVICE)
     }
     const user = await this.userRepository.findById(decoded.id)
-    const accessToken = this.tokenService.generateAccessToken(user)
+    const accessToken = await this.tokenService.generateAccessToken(user)
     this.logger.log('info', `리프레시 토큰 검증 완료-유저 ID:${user.id}`)
     return { accessToken }
   }
