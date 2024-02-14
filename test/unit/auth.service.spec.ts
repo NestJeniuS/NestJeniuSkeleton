@@ -54,7 +54,7 @@ describe('AuthService', () => {
     createdAt: new Date(),
   }
   const mockUser: ReqLoginAppDto = {
-    id: '123e4567-e89b-12d3-a456-426614174000', // UUID 형식의 문자열
+    id: '123e4567-e89b-12d3-a456-426614174000',
     ip: '127.0.0.1',
     device: {
       browser: 'Chrome',
