@@ -45,17 +45,17 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(LocalAuthGuard)
   async login(@Req() req: Request, @Res() res: Response): Promise<void> {
-    console.log(req.headers)
-
-    const { browser, platform, os, version } = useragent.parse(
-      req.headers['user-agent'],
-    )
+    const os = useragent.parse(req.headers['user-agent'])
+    const browser = os.family
+    const platform = os.os.family
+    const version = `${os.major}.${os.minor}.${os.patch}`
 
     const { accessToken, refreshToken } = await this.authService.login({
       id: req.user.id,
       ip: req.ip,
-      device: { browser, platform, os, version },
+      device: { browser, platform, version },
     })
+
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: true,
@@ -90,13 +90,18 @@ export class AuthController {
   async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
       const { refreshToken } = req.cookies
-      const { browser, platform, os, version } = useragent.parse(
-        req.headers['user-agent'],
-      )
+
+      const os = useragent.parse(req.headers['user-agent'])
+      const browser = os.family
+      const platform = os.os.family
+      const version = `${os.major}.${os.minor}.${os.patch}`
+
+      console.log(platform)
+
       const { accessToken } = await this.authService.refresh({
         refreshToken,
         ip: req.ip,
-        device: { browser, platform, os, version },
+        device: { browser, platform, version },
       })
       res.cookie('accessToken', accessToken, {
         httpOnly: true,
