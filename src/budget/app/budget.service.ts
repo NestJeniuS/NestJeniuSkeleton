@@ -23,15 +23,12 @@ import {
   BUDGET_ALREADY_EXIST,
   BUDGET_NOTFOUND,
 } from '@common/messages/budget/budget.error'
-import { IHandleDateTime } from '@common/interfaces/IHandleDateTime'
 
 @Injectable()
 export class BudgetService implements IBudgetService {
   constructor(
     @Inject(IBUDGET_REPOSITORY)
     private readonly budgetRepository: IBudgetRepository,
-    @Inject(IHANDLE_DATE_TIME)
-    private readonly handleDateTime: IHandleDateTime,
   ) {}
 
   async createBudget(req: ReqBudgetDto): Promise<string> {
@@ -107,9 +104,11 @@ export class BudgetService implements IBudgetService {
         req.userId,
       )
 
+      console.log(findBudgetRatio)
+
       const totalBudget = Number(req.total)
 
-      let recommendedBudget = calculateRecommendedBudget(
+      const recommendedBudget = calculateRecommendedBudget(
         findBudgetRatio,
         (ratio: number) => calculateBudget(totalBudget, ratio),
       )

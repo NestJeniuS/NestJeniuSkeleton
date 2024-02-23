@@ -8,7 +8,6 @@ import {
   Inject,
   Body,
   HttpCode,
-  Header,
   HttpStatus,
 } from '@nestjs/common'
 import { LocalAuthGuard } from '@auth/infra/passport/guards/local.guard'

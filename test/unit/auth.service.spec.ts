@@ -1,7 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { AuthService } from '../../src/auth/app/auth.service'
-import { JwtAuthGuard } from '@auth/infra/passport/guards/jwt.guard'
-import { LocalAuthGuard } from '@auth/infra/passport/guards/local.guard'
 import {
   ICACHE_SERVICE,
   IPASSWORD_HASHER,
