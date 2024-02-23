@@ -46,7 +46,6 @@ export class BudgetService implements IBudgetService {
       if (Object.keys(existingBudget).length > 0) {
         throw new ConflictException(BUDGET_ALREADY_EXIST)
       } else {
-        // Promise.all을 사용하여 모든 프로미스를 병렬로 해결
         await Promise.all(
           Object.entries(req.amount).map(async ([classification, budget]) => {
             await this.budgetRepository.createBudget(
