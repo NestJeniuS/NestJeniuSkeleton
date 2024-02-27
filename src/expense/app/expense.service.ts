@@ -97,7 +97,6 @@ export class ExpenseService implements IExpenseService {
           req.userId,
           yearMonth,
         )
-      console.log(totalMonthlyExpenseResult)
 
       const totalWeeklyExpenseResult =
         await this.expenseRepository.getWeeklyExpense(req.userId, yearMonth)
@@ -127,7 +126,6 @@ export class ExpenseService implements IExpenseService {
         req.userId,
         yearMonth,
       )
-      console.log('expenses', expenses)
 
       const result = expenses.map((expense) => ({
         id: expense.id,
