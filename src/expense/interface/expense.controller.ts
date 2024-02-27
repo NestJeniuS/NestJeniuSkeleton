@@ -117,7 +117,6 @@ export class ExpenseController {
       userId,
       ...month,
     })
-    console.log('getAllExpense', getAllExpense)
     return getAllExpense
   }
 
