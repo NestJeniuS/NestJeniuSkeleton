@@ -1,11 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { BudgetService } from '@budget/app/budget.service'
 import { IBUDGET_REPOSITORY } from '@common/constants/provider.constant'
-import {
-  ConflictException,
-  NotFoundException,
-  InternalServerErrorException,
-} from '@nestjs/common'
 import { v4 as uuidv4 } from 'uuid'
 
 describe('BudgetService', () => {

@@ -97,7 +97,6 @@ export class ExpenseService implements IExpenseService {
           req.userId,
           yearMonth,
         )
-      //   console.log(totalMonthlyExpenseResult)
 
       const totalWeeklyExpenseResult =
         await this.expenseRepository.getWeeklyExpense(req.userId, yearMonth)
@@ -137,7 +136,9 @@ export class ExpenseService implements IExpenseService {
 
       return result
     } catch (error) {
-      // error handling
+      throw new InternalServerErrorException(
+        '한달 모든 지출 불러오기에 실패했습니다.',
+      )
     }
   }
 

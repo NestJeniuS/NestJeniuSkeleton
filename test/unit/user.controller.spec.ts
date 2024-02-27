@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { UserController } from '@user/interface/user.controller'
-import { UserService } from '@user/app/user.service'
 import { ReqRegisterAppDto } from '@user/domain/dto/register.app.dto'
 import { ConflictException } from '@nestjs/common'
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston'

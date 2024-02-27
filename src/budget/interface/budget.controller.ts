@@ -41,11 +41,11 @@ export class BudgetController {
     @Body() budget: ReqBudgetDto,
   ): Promise<string> {
     const userId = req.user.id
-
     const budgets = await this.budegetService.createBudget({
       userId,
       ...budget,
     })
+
     return budgets
   }
 
