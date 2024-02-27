@@ -105,6 +105,22 @@ export class ExpenseController {
     return monthlyExpenses
   }
 
+  @Get('list')
+  @UsePipes(ValidationPipe)
+  @HttpCode(HttpStatus.OK)
+  async getAllExpense(
+    @Req() req: Request,
+    @Query() month: ReqMonthlyDto,
+  ): Promise<ResGetExpenseDto[]> {
+    const userId = req.user.id
+    const getAllExpense = await this.expenseService.getAllExpense({
+      userId,
+      ...month,
+    })
+    console.log('getAllExpense', getAllExpense)
+    return getAllExpense
+  }
+
   @Get('classification')
   @UsePipes(ValidationPipe)
   @HttpCode(HttpStatus.OK)
@@ -131,21 +147,6 @@ export class ExpenseController {
     const userId = req.user.id
     const getExpense = await this.expenseService.getExpense(expenseId, userId)
     return getExpense
-  }
-
-  @Get('list')
-  @UsePipes(ValidationPipe)
-  @HttpCode(HttpStatus.OK)
-  async getAllExpense(
-    @Req() req: Request,
-    @Query() month: ReqMonthlyDto,
-  ): Promise<ResGetExpenseDto[]> {
-    const userId = req.user.id
-    const getAllExpense = await this.expenseService.getAllExpense({
-      userId,
-      ...month,
-    })
-    return getAllExpense
   }
 
   // @Put()

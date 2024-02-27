@@ -104,8 +104,6 @@ export class BudgetService implements IBudgetService {
         req.userId,
       )
 
-      console.log(findBudgetRatio)
-
       const totalBudget = Number(req.total)
 
       const recommendedBudget = calculateRecommendedBudget(
