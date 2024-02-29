@@ -19,7 +19,7 @@ export class ReqExpenseDto {
 
   @IsNotEmpty({ message: '지출 일자는 필수적으로 입력해야 합니다.' })
   @IsDateString()
-  date: Date
+  date: string
 
   @IsString()
   memo?: string
