@@ -17,17 +17,30 @@ export class UserRepository implements IUserRepository {
   ) {}
 
   // 유저 생성
-  async createUser(email: string, password: string): Promise<User> {
-    const newUser = await this.userRepository.save({ email, password })
+  async createUser(
+    email: string,
+    password: string,
+    name: string,
+    nickname: string,
+    birthdate: Date,
+    age: number,
+    gender: string,
+  ): Promise<User> {
+    const newUser = await this.userRepository.save({
+      email,
+      password,
+      name,
+      nickname,
+      birthdate,
+      age,
+      gender,
+    })
     return plainToClass(User, newUser)
   }
 
   async findByEmail(email: string): Promise<User> {
     try {
-      // console.log(User)
-      // console.log(2, email)
       const user = await this.userRepository.findOne({ where: { email } })
-      // console.log(user)
       return plainToClass(User, user)
     } catch (error) {
       console.log(error)

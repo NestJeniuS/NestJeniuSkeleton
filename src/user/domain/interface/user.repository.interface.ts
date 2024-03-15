@@ -3,13 +3,21 @@ import { User } from '../entity/user.entity'
 import { UUID } from 'crypto'
 
 export interface IUserRepository {
-  createUser(email: string, password: string): Promise<User>
+  createUser(
+    email: string,
+    password: string,
+    name: string,
+    nickname: string,
+    birthdate: Date,
+    age: number,
+    gender: string,
+  ): Promise<User>
 
   findByEmail(email: string): Promise<User | null>
 
   findById(id: string): Promise<User | null>
 
-  findPasswordById(id: UUID): Promise<string>
+  findPasswordById(id: string): Promise<string>
 
   // changePassword(id: string, newPassword: string): Promise<void>
 

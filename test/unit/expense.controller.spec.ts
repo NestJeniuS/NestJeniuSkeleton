@@ -146,8 +146,7 @@ describe('ExpenseController', () => {
       month: '2023-11',
     }
 
-    const mockClassificationExpenses: ResClassificationExpenseDto[] = [] // Mock classification expenses array
-
+    const mockClassificationExpenses: ResClassificationExpenseDto[] = []
     jest
       .spyOn(mockExpenseService, 'getTotalExpenseByClassification')
       .mockResolvedValue(mockClassificationExpenses)
@@ -171,7 +170,7 @@ describe('ExpenseController', () => {
       user: { id: 'fadc33cf-4361-4385-8528-424402a0e9f1' },
     } as unknown as Request
 
-    const mockExpenseId = 12345 // Mock expense ID
+    const mockExpenseId = 1 // Mock expense ID
 
     const mockDetailExpense: ResDetailExpenseDto = {
       id: 1,

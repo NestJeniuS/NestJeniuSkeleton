@@ -24,6 +24,7 @@ import { IUserService } from '@user/domain/interface/user.service.interface'
 import { IPasswordHasher } from '@common/interfaces/IPasswordHasher'
 import { ConfigService } from '@nestjs/config'
 import { REGISTER_SUCCESS_MESSAGE } from '@common/messages/user/user.messages'
+import { User } from '@user/domain/entity/user.entity'
 
 @Injectable()
 export class UserService implements IUserService {
@@ -38,8 +39,8 @@ export class UserService implements IUserService {
     private readonly passwordHasher: IPasswordHasher,
   ) {}
 
-  async register(newUser: ReqRegisterAppDto): Promise<void> {
-    const { email, password } = newUser
+  async register(newUser: ReqRegisterAppDto): Promise<User> {
+    const { email, password, name, nickname, birthdate, age, gender } = newUser
 
     const existingUser = await this.userRepository.findByEmail(email)
 
@@ -52,11 +53,18 @@ export class UserService implements IUserService {
     const createdUser = await this.userRepository.createUser(
       email,
       hashedPassword,
+      name,
+      nickname,
+      birthdate,
+      age,
+      gender,
     )
 
     this.logger.log(
       'info',
-      `${REGISTER_SUCCESS_MESSAGE}-가입 이메일:${createdUser.email}, 유저 ID:${createdUser.id}, 가입 일시:${createdUser.createdAt}`,
+      `${REGISTER_SUCCESS_MESSAGE}- 가입 이메일:${createdUser.email}, 유저 ID:${createdUser.id}, 가입 일시:${createdUser.createdAt}`,
     )
+
+    return createdUser
   }
 }

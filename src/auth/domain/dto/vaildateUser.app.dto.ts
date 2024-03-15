@@ -6,7 +6,7 @@ export class ReqValidateUserAppDto {
 }
 
 export class ResValidateUserAppDto {
-  readonly id: UUID
+  readonly id: string
   readonly email: string
   readonly createdAt: Date
 }

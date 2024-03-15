@@ -1,7 +1,8 @@
 import { ReqRegisterAppDto } from '../dto/register.app.dto'
+import { User } from '../entity/user.entity'
 
 export interface IUserService {
-  register(user: ReqRegisterAppDto): Promise<void>
+  register(user: ReqRegisterAppDto): Promise<User>
 
   //   getUser(req: ReqGetUserAppDto): Promise<ResGetUserAppDto>;
 
