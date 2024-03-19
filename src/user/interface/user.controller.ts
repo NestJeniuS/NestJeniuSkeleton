@@ -6,11 +6,19 @@ import {
   HttpStatus,
   Controller,
   Response,
+  Put,
+  Req,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+  Delete,
 } from '@nestjs/common'
-import { ReqRegisterDto } from './dto/registerUserDto'
+import { ReqRegisterDto, ReqUpdateDto } from './dto/registerUserDto'
 import { IUSER_SERVICE } from '@common/constants/provider.constant'
 import { IUserService } from '@user/domain/interface/user.service.interface'
 import { User } from '@user/domain/entity/user.entity'
+import { Request } from 'express'
+import { JwtAuthGuard } from '@auth/infra/passport/guards/jwt.guard'
 
 @Controller('users')
 export class UserController {
@@ -22,7 +30,27 @@ export class UserController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() user: ReqRegisterDto, @Response() res): Promise<User> {
-    // res.status(201).json({ message: '계정 생성에 성공하였습니다.' })
     return await this.userService.register(user)
+  }
+
+  @Put()
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(ValidationPipe)
+  @HttpCode(HttpStatus.OK)
+  async update(
+    @Req() req: Request,
+    @Body() user: ReqUpdateDto,
+  ): Promise<object> {
+    const userId = req.user.id
+    return await this.userService.updateUser(userId, user)
+  }
+
+  @Delete()
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(ValidationPipe)
+  @HttpCode(HttpStatus.OK)
+  async delete(@Req() req: Request): Promise<object> {
+    const userId = req.user.id
+    return await this.userService.deleteUser(userId)
   }
 }

@@ -8,7 +8,6 @@ import {
   UseGuards,
   Req,
   HttpCode,
-  Res,
   HttpStatus,
   UsePipes,
   ValidationPipe,
@@ -21,9 +20,7 @@ import {
   ReqRecommendBudgetDto,
 } from '@budget/domain/dto/budget.app.dto'
 import { JwtAuthGuard } from '@auth/infra/passport/guards/jwt.guard'
-import { plainToClass } from 'class-transformer'
 import { Request } from 'express'
-import { config } from 'rxjs'
 
 @Controller('budgets')
 @UseGuards(JwtAuthGuard)

@@ -1,14 +1,10 @@
-import { ReqRegisterAppDto } from '../dto/register.app.dto'
+import { ReqRegisterAppDto, ReqUpdateUserAppDto } from '../dto/register.app.dto'
 import { User } from '../entity/user.entity'
 
 export interface IUserService {
   register(user: ReqRegisterAppDto): Promise<User>
 
-  //   getUser(req: ReqGetUserAppDto): Promise<ResGetUserAppDto>;
+  updateUser(userId: string, req: ReqUpdateUserAppDto): Promise<object>
 
-  //   updateUser(req: ReqUpdateUserAppDto): Promise<void>;
-
-  //   deleteUser(req: ReqDeleteUserAppDto): Promise<void>;
-
-  //   getUserList(req: ReqGetUserListAppDto): Promise<ResGetUserListAppDto[]>;
+  deleteUser(userId: string): Promise<object>
 }

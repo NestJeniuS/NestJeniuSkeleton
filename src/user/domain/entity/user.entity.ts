@@ -3,14 +3,12 @@ import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
-  Unique,
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
   DeleteDateColumn,
 } from 'typeorm'
-import { Exclude, Expose, Transform, Type } from 'class-transformer'
-import { UUID } from 'crypto'
+import { Exclude, Expose } from 'class-transformer'
 import { Expense } from '@expense/infra/db/expense.entity'
 
 @Entity()

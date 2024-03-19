@@ -1,5 +1,4 @@
 import {
-  IsDate,
   IsDateString,
   IsEmail,
   IsInt,
@@ -45,14 +44,12 @@ export class ReqRegisterDto {
   @IsString()
   readonly gender: string
 }
-
-export class ResRegisterExistUserError {
-  @IsInt()
-  readonly statusCode: number
+export class ReqUpdateDto {
+  readonly userId: string
 
   @IsString()
-  readonly message: string
+  readonly name: string
 
   @IsString()
-  readonly path: string
+  readonly nickname: string
 }

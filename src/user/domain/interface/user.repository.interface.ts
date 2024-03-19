@@ -1,6 +1,7 @@
 import { ReqRegisterDto } from '@user/interface/dto/registerUserDto'
 import { User } from '../entity/user.entity'
 import { UUID } from 'crypto'
+import { ReqUpdateUserAppDto } from '../dto/register.app.dto'
 
 export interface IUserRepository {
   createUser(
@@ -19,7 +20,9 @@ export interface IUserRepository {
 
   findPasswordById(id: string): Promise<string>
 
-  // changePassword(id: string, newPassword: string): Promise<void>
+  updateUser(id: string, req: ReqUpdateUserAppDto): Promise<User>
 
-  // deleteUser(id: string): Promise<User>
+  deleteUser(id: string): Promise<User>
+
+  // changePassword(id: string, newPassword: string): Promise<void>
 }

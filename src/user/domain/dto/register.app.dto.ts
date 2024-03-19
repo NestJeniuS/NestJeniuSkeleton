@@ -7,3 +7,8 @@ export class ReqRegisterAppDto {
   readonly age: number
   readonly gender: string
 }
+
+export class ReqUpdateUserAppDto {
+  readonly name: string
+  readonly nickname: string
+}

@@ -12,7 +12,10 @@ import {
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston'
 import { IUserRepository } from '@user/domain/interface/user.repository.interface'
 import { ICacheService } from '@cache/cache.service.interface'
-import { ReqRegisterAppDto } from '@user/domain/dto/register.app.dto'
+import {
+  ReqRegisterAppDto,
+  ReqUpdateUserAppDto,
+} from '@user/domain/dto/register.app.dto'
 import { plainToClass } from 'class-transformer'
 import {
   ICACHE_SERVICE,
@@ -64,7 +67,28 @@ export class UserService implements IUserService {
       'info',
       `${REGISTER_SUCCESS_MESSAGE}- 가입 이메일:${createdUser.email}, 유저 ID:${createdUser.id}, 가입 일시:${createdUser.createdAt}`,
     )
-
     return createdUser
+  }
+
+  async updateUser(userId: string, req: ReqUpdateUserAppDto): Promise<object> {
+    const existingUser = await this.userRepository.findById(userId)
+
+    if (!existingUser) {
+      throw new ConflictException(USER_NOT_FOUND)
+    }
+    const updatedUser = await this.userRepository.updateUser(userId, req)
+
+    return { message: '유저 정보 업데이트에 성공했습니다', updatedUser }
+  }
+
+  async deleteUser(userId: string): Promise<object> {
+    const existingUser = await this.userRepository.findById(userId)
+
+    if (!existingUser) {
+      throw new ConflictException(USER_NOT_FOUND)
+    }
+
+    const deletedUser = await this.userRepository.deleteUser(userId)
+    return { message: '회원탈퇴에 성공했습니다.', deletedUser }
   }
 }
