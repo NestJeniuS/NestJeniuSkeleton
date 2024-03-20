@@ -1,10 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  Logger,
-  ConflictException,
-  NotFoundException,
-} from '@nestjs/common'
+import { Inject, Injectable, Logger, ConflictException } from '@nestjs/common'
 import {
   USER_ALREADY_EXIST,
   USER_NOT_FOUND,
@@ -16,16 +10,13 @@ import {
   ReqRegisterAppDto,
   ReqUpdateUserAppDto,
 } from '@user/domain/dto/register.app.dto'
-import { plainToClass } from 'class-transformer'
 import {
   ICACHE_SERVICE,
   IPASSWORD_HASHER,
   IUSER_REPOSITORY,
-  IUSER_SERVICE,
 } from '@common/constants/provider.constant'
 import { IUserService } from '@user/domain/interface/user.service.interface'
 import { IPasswordHasher } from '@common/interfaces/IPasswordHasher'
-import { ConfigService } from '@nestjs/config'
 import { REGISTER_SUCCESS_MESSAGE } from '@common/messages/user/user.messages'
 import { User } from '@user/domain/entity/user.entity'
 

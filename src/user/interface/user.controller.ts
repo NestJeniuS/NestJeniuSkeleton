@@ -12,6 +12,7 @@ import {
   UsePipes,
   ValidationPipe,
   Delete,
+  Patch,
 } from '@nestjs/common'
 import { ReqRegisterDto, ReqUpdateDto } from './dto/registerUserDto'
 import { IUSER_SERVICE } from '@common/constants/provider.constant'
@@ -33,7 +34,7 @@ export class UserController {
     return await this.userService.register(user)
   }
 
-  @Put()
+  @Patch()
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
   @HttpCode(HttpStatus.OK)

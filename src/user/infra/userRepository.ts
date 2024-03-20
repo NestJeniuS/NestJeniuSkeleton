@@ -6,7 +6,6 @@ import { Repository } from 'typeorm'
 import { plainToClass } from 'class-transformer'
 import { ReqUpdateUserAppDto } from '@user/domain/dto/register.app.dto'
 
-// @CustomRepository(User)
 @Injectable()
 export class UserRepository implements IUserRepository {
   constructor(
