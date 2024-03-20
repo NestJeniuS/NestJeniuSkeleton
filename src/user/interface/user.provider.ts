@@ -27,8 +27,4 @@ export const UserProvider = [
     provide: IPASSWORD_HASHER,
     useClass: PasswordHasher,
   },
-  // {
-  //   provide: WINSTON_MODULE_PROVIDER,
-  //   useClass: Logger,
-  // },
 ]

@@ -36,15 +36,16 @@ export class ExpenseService implements IExpenseService {
   ) {}
 
   async createExpense(req: ReqExpenseDto): Promise<string> {
-    const {
-      classificationId,
-      userId,
-      amount,
-      memo,
-      exception,
-      date: reqDate,
-    } = req
     try {
+      const {
+        classificationId,
+        userId,
+        amount,
+        memo,
+        exception,
+        date: reqDate,
+      } = req
+
       const date = new Date(reqDate)
       const year = this.handleDateTime.getYear(date)
       const month = this.handleDateTime.getMonth(date)
@@ -84,6 +85,7 @@ export class ExpenseService implements IExpenseService {
       }
     }
   }
+
   async getMonthlyExpense(req: ReqMonthlyDto): Promise<object> {
     try {
       const yearMonthZoned = this.handleDateTime.getYearMonth(req.month)
@@ -126,7 +128,7 @@ export class ExpenseService implements IExpenseService {
         req.userId,
         yearMonth,
       )
-
+      console.log('expenses', expenses)
       const result = expenses.map((expense) => ({
         id: expense.id,
         date: expense.date,
